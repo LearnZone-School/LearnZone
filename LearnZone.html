@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Zone</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #46178f;
+  --purple-light: #7c3aed;
+  --red:    #e21b3c;
+  --blue:   #1368ce;
+  --yellow: #d89e00;
+  --green:  #26890c;
+  --red-bg:    #e21b3c;
+  --blue-bg:   #1368ce;
+  --yellow-bg: #f0aa00;
+  --green-bg:  #2fa90f;
+  --bg: #f0f0f0;
+  --white: #ffffff;
+  --text: #333333;
+  --muted: #666666;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+.page { min-height: 100vh; display: none; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ── AUTH ─────────────────────────────────────────────────── */
+#auth-page {
+  background: var(--purple);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  animation: fadeUp 0.35s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-logo h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--purple);
+  letter-spacing: -0.5px;
+}
+
+.auth-logo p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.tab-row {
+  display: flex;
+  border-bottom: 2px solid #e5e5e5;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 0 12px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.tab-btn.active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+}
+
+.field { margin-bottom: 16px; }
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  border: 2px solid #e5e5e5;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  background: #fafafa;
+}
+
+.field input:focus { border-color: var(--purple); background: #fff; }
+
+.auth-err {
+  background: #fff0f0;
+  border: 1.5px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: none;
+}
+
+.btn-purple {
+  width: 100%;
+  background: var(--purple);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  margin-top: 4px;
+}
+
+.btn-purple:hover { background: #5a1fad; }
+.btn-purple:active { transform: scale(0.98); }
+.btn-purple:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── NAVBAR ───────────────────────────────────────────────── */
+.navbar {
+  background: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-chip {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.5);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-ghost:hover { background: rgba(255,255,255,0.15); }
+
+/* ── DASHBOARD ────────────────────────────────────────────── */
+#dashboard-page { background: var(--bg); }
+
+.dash-body {
+  flex: 1;
+  padding: 36px 28px;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.dash-hero {
+  background: var(--purple);
+  border-radius: 12px;
+  padding: 32px 36px;
+  color: #fff;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-hero h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.dash-hero p { font-size: 14px; opacity: 0.8; font-weight: 500; }
+.dash-hero .hero-emoji { font-size: 56px; }
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-head h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.btn-outline-purple {
+  background: transparent;
+  border: 2px solid var(--purple);
+  color: var(--purple);
+  border-radius: var(--radius);
+  padding: 8px 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-outline-purple:hover { background: var(--purple); color: #fff; }
+
+.mode-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.mode-tile {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 24px 22px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.mode-tile:hover {
+  border-color: var(--purple);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.mode-tile .tile-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+
+.mode-tile h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.mode-tile p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tag.purple { background: #ede9fe; color: var(--purple); }
+.tag.amber  { background: #fef3c7; color: #92400e; }
+
+.sets-mini {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.set-mini-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 18px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-left: 4px solid var(--purple);
+}
+
+.set-mini-card h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.set-mini-card p { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+  background: var(--white);
+  border-radius: 10px;
+}
+
+.empty-state .e-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state h4 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.empty-state p { font-size: 13px; font-weight: 500; }
+
+/* ── SETS PICKER ──────────────────────────────────────────── */
+#sets-page { background: var(--bg); }
+
+.subbar {
+  background: var(--white);
+  border-bottom: 2px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  flex-shrink: 0;
+}
+
+.subbar h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--purple);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+
+.btn-back:hover { background: #ede9fe; }
+
+.sets-full-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  padding: 28px 28px;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.set-full-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: all 0.15s;
+  border-top: 4px solid var(--purple);
+}
+
+.set-full-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+.set-full-card h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.set-full-card .q-count { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 16px; }
+
+.card-actions { display: flex; gap: 8px; }
+
+.btn-card {
+  flex: 1;
+  padding: 9px 8px;
+  border-radius: var(--radius);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-card.game  { background: var(--purple); color: #fff; }
+.btn-card.game:hover { background: #5a1fad; }
+.btn-card.study { background: #fef3c7; color: #92400e; }
+.btn-card.study:hover { background: #fde68a; }
+.btn-card.del   { background: #fee2e2; color: #b91c1c; }
+.btn-card.del:hover { background: #fecaca; }
+
+/* ── BUILDER ──────────────────────────────────────────────── */
+#set-builder-page { background: var(--bg); }
+
+.builder-body {
+  flex: 1;
+  padding: 28px;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.builder-input {
+  width: 100%;
+  border: 2px solid #e5e5e5;
+  border-radius: var(--radius);
+  padding: 13px 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 20px;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.builder-input:focus { border-color: var(--purple); }
+
+.q-card {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  position: relative;
+  border-top: 3px solid var(--purple);
+}
+
+.q-card-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.q-input {
+  width: 100%;
+  border: 2px solid #e5e5e5;
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  margin-bottom: 14px;
+  transition: border-color 0.15s;
+}
+
+.q-input:focus { border-color: var(--purple); }
+
+.ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.ans-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius);
+  padding: 6px 10px 6px 6px;
+  border: 2px solid #e5e5e5;
+  background: #fafafa;
+  transition: border-color 0.15s;
+}
+
+.ans-row.is-correct { border-color: var(--green-bg); background: #f0fff4; }
+
+.ans-dot {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; color: #fff;
+  flex-shrink: 0;
+}
+
+.ans-dot.a { background: var(--red-bg); }
+.ans-dot.b { background: var(--blue-bg); }
+.ans-dot.c { background: var(--yellow-bg); color: #333; }
+.ans-dot.d { background: var(--green-bg); }
+
+.ans-row input[type=text], .ans-row input:not([type]) {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  min-width: 0;
+}
+
+.ans-check {
+  appearance: none;
+  width: 18px; height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.ans-check:checked { background: var(--green-bg); border-color: var(--green-bg); }
+.ans-check:checked::after { content:'✓'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:11px; color:#fff; font-weight:800; }
+
+.btn-del-q {
+  position: absolute; top: 14px; right: 14px;
+  background: #fee2e2; border: none; color: #b91c1c;
+  border-radius: 6px; width: 28px; height: 28px;
+  font-size: 14px; cursor: pointer; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-del-q:hover { background: #fecaca; }
+
+.btn-add-q {
+  width: 100%;
+  background: #fff;
+  border: 2px dashed #ccc;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.15s;
+}
+.btn-add-q:hover { border-color: var(--purple); color: var(--purple); background: #faf8ff; }
+
+/* ── GAME PAGE ────────────────────────────────────────────── */
+#game-page { background: var(--purple); }
+
+.game-top {
+  background: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  flex-shrink: 0;
+}
+
+.game-top-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.85);
+}
+
+.game-stat-pill {
+  background: rgba(255,255,255,0.18);
+  border-radius: 99px;
+  padding: 6px 16px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.progress-wrap { height: 6px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+.progress-fill { height: 100%; background: #fff; transition: width 0.5s ease; }
+
+.game-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  gap: 20px;
+}
+
+.timer-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--purple);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.timer-circle.warn { color: var(--red); }
+
+.q-bubble {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 720px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.q-bubble .q-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.ans-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.tile-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0 20px;
+  height: 80px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: filter 0.15s, transform 0.1s;
+  text-align: left;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.25);
+}
+
+.tile-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.tile-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+.tile-btn:disabled { cursor: not-allowed; }
+
+.tile-btn[data-i="0"] { background: var(--red-bg); }
+.tile-btn[data-i="1"] { background: var(--blue-bg); }
+.tile-btn[data-i="2"] { background: var(--yellow-bg); color: #333; }
+.tile-btn[data-i="3"] { background: var(--green-bg); }
+
+.tile-btn .t-shape {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tile-btn.correct { filter: brightness(1) !important; outline: 4px solid #fff; }
+.tile-btn.wrong   { filter: brightness(0.45) !important; }
+.tile-btn.dim     { filter: brightness(0.45) !important; }
+
+.feedback-strip {
+  width: 100%;
+  max-width: 720px;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  text-align: center;
+  display: none;
+  animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+
+.feedback-strip.ok  { background: #d1fae5; color: #065f46; }
+.feedback-strip.bad { background: #fee2e2; color: #991b1b; }
+
+/* ── STUDY PAGE ───────────────────────────────────────────── */
+#study-page { background: #f5f5f5; }
+
+.study-top {
+  background: #f0aa00;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  flex-shrink: 0;
+}
+
+.study-top-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #333;
+}
+
+.study-stat-pill {
+  background: rgba(0,0,0,0.12);
+  border-radius: 99px;
+  padding: 6px 16px;
+  color: #333;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.study-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px;
+  gap: 20px;
+}
+
+.streak-banner {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 99px;
+  padding: 6px 20px;
+}
+
+.study-q-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  width: 100%;
+  max-width: 680px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-top: 4px solid #f0aa00;
+}
+
+.study-q-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.study-q-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.study-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
+}
+
+.study-tile {
+  border: none;
+  border-radius: 10px;
+  padding: 0 18px;
+  height: 72px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  transition: filter 0.15s, transform 0.1s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+
+.study-tile:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.study-tile[data-i="0"] { background: var(--red-bg); }
+.study-tile[data-i="1"] { background: var(--blue-bg); }
+.study-tile[data-i="2"] { background: var(--yellow-bg); color: #333; }
+.study-tile[data-i="3"] { background: var(--green-bg); }
+.study-tile .t-shape {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.study-tile.correct { outline: 4px solid #fff; filter: brightness(1) !important; }
+.study-tile.wrong   { filter: brightness(0.45) !important; }
+.study-tile.dim     { filter: brightness(0.45) !important; }
+.study-tile:disabled { cursor: not-allowed; }
+
+.study-done {
+  background: #fff;
+  border-radius: 10px;
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: none;
+}
+
+.study-done h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.study-done p { font-size: 14px; color: var(--muted); font-weight: 500; margin-bottom: 24px; }
+
+/* ── RESULTS PAGE ─────────────────────────────────────────── */
+#results-page { background: var(--purple); align-items: center; justify-content: center; }
+
+.results-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 48px 40px;
+  max-width: 480px;
+  width: 100%;
+  margin: 20px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  animation: fadeUp 0.35s ease;
+}
+
+.results-trophy { font-size: 64px; margin-bottom: 8px; }
+
+.results-card h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.results-score {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 60px;
+  font-weight: 900;
+  color: var(--purple);
+  line-height: 1.1;
+  margin: 12px 0 4px;
+}
+
+.results-pts { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 24px; }
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.stat-box {
+  flex: 1;
+  background: #f8f8f8;
+  border-radius: var(--radius);
+  padding: 16px 10px;
+}
+
+.stat-box .sv {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.stat-box .sl { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.stat-box.correct .sv { color: var(--green); }
+.stat-box.wrong .sv   { color: var(--red); }
+.stat-box.pct .sv     { color: var(--blue); }
+
+.results-actions { display: flex; gap: 10px; }
+
+.btn-again {
+  flex: 1;
+  background: #f0f0f0;
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.btn-again:hover { background: #e5e5e5; }
+
+/* ── MISC ─────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #1a1a1a;
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.loading { text-align:center; padding: 40px; color: var(--muted); font-weight: 600; font-size: 14px; }
+
+@media (max-width: 600px) {
+  .mode-row { grid-template-columns: 1fr; }
+  .ans-tiles { grid-template-columns: 1fr; }
+  .study-tiles { grid-template-columns: 1fr; }
+  .ans-grid { grid-template-columns: 1fr; }
+  .dash-hero { flex-direction: column; gap: 16px; text-align: center; }
+  .stats-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-page" class="page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Learn Zone</h1>
+      <p>Quiz smarter, learn faster</p>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="auth-user" placeholder="your_username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-purple" id="auth-btn" onclick="handleAuth()">Sign In</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page" class="page">
+  <nav class="navbar">
+    <span class="nav-logo">Learn Zone</span>
+    <div class="nav-right">
+      <span class="nav-chip" id="nav-uname">User</span>
+      <button class="btn-ghost" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+  <div class="dash-body">
+    <div class="dash-hero">
+      <div>
+        <h2 id="dash-greeting">Welcome back!</h2>
+        <p>Pick a mode and start quizzing</p>
+      </div>
+      <span class="hero-emoji">🧠</span>
+    </div>
+
+    <div class="section-head" style="margin-bottom:14px">
+      <h3>Choose a Mode</h3>
+    </div>
+    <div class="mode-row" style="margin-bottom:28px">
+      <div class="mode-tile" onclick="showPage('sets-page','game')">
+        <span class="tile-icon">🎮</span>
+        <h4>Game Mode</h4>
+        <p>Race the clock. Score points. Beat your streak.</p>
+        <span class="tag purple">Timed · Scored</span>
+      </div>
+      <div class="mode-tile" onclick="showPage('sets-page','study')">
+        <span class="tile-icon">📚</span>
+        <h4>Study Mode</h4>
+        <p>No timer. Get 3 right in a row to finish.</p>
+        <span class="tag amber">Relaxed · Streak</span>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h3>My Sets</h3>
+      <button class="btn-outline-purple" onclick="showPage('set-builder-page')">+ New Set</button>
+    </div>
+    <div id="dash-sets"><div class="loading">Loading…</div></div>
+  </div>
+</div>
+
+<!-- SETS PICKER -->
+<div id="sets-page" class="page">
+  <nav class="navbar">
+    <span class="nav-logo">Learn Zone</span>
+    <div class="nav-right">
+      <span class="nav-chip" id="sets-nav-uname">User</span>
+    </div>
+  </nav>
+  <div class="subbar">
+    <button class="btn-back" onclick="showPage('dashboard-page')">← Back</button>
+    <h2 id="sets-page-title">Pick a Set</h2>
+  </div>
+  <div id="sets-full-grid" class="sets-full-grid"></div>
+</div>
+
+<!-- BUILDER -->
+<div id="set-builder-page" class="page">
+  <nav class="navbar">
+    <span class="nav-logo">Learn Zone</span>
+  </nav>
+  <div class="subbar">
+    <button class="btn-back" onclick="showPage('dashboard-page')">← Back</button>
+    <h2>Create Set</h2>
+  </div>
+  <div class="builder-body">
+    <input class="builder-input" id="set-title" placeholder="Set title (e.g. Biology Chapter 3)">
+    <div id="q-list"></div>
+    <button class="btn-add-q" onclick="addQuestion()">+ Add Question</button>
+    <button class="btn-purple" onclick="saveSet()">Save Set</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game-page" class="page">
+  <div class="game-top">
+    <span class="game-top-title" id="game-title">Quiz</span>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="game-stat-pill" id="game-score-pill">0 pts</span>
+      <span class="game-stat-pill" id="game-streak-pill">0🔥</span>
+      <button class="btn-ghost" onclick="quitGame()">✕ Quit</button>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="game-prog" style="width:0%"></div>
+  </div>
+  <div class="game-center">
+    <div class="timer-circle" id="timer">20</div>
+    <div class="q-bubble">
+      <div class="q-text" id="q-text">Loading…</div>
+    </div>
+    <div class="ans-tiles" id="ans-tiles"></div>
+    <div class="feedback-strip" id="game-fb"></div>
+  </div>
+</div>
+
+<!-- STUDY -->
+<div id="study-page" class="page">
+  <div class="study-top">
+    <span class="study-top-title" id="study-title">Study</span>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="study-stat-pill" id="study-streak-pill">0🔥</span>
+      <button style="background:rgba(0,0,0,0.1);border:none;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;cursor:pointer;" onclick="showPage('dashboard-page')">✕ Quit</button>
+    </div>
+  </div>
+  <div class="study-center">
+    <div class="streak-banner" id="streak-banner" style="display:none">🔥 Streak!</div>
+    <div class="study-q-card" id="study-q-card">
+      <div class="study-q-label" id="study-q-label">Question 1</div>
+      <div class="study-q-text" id="study-q-text">Loading…</div>
+    </div>
+    <div class="study-tiles" id="study-tiles"></div>
+    <div class="feedback-strip" id="study-fb" style="display:none;width:100%;max-width:680px;"></div>
+    <div class="study-done" id="study-done">
+      <h3>🎉 Complete!</h3>
+      <p>You got 3 correct in a row. Nicely done!</p>
+      <button class="btn-purple" onclick="showPage('dashboard-page')">Back to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results-page" class="page">
+  <div class="results-card">
+    <div class="results-trophy" id="r-trophy">🏆</div>
+    <h2 id="r-title">Quiz Complete!</h2>
+    <div class="results-score" id="r-score">0</div>
+    <div class="results-pts">points</div>
+    <div class="stats-row">
+      <div class="stat-box correct"><div class="sv" id="r-correct">0</div><div class="sl">Correct</div></div>
+      <div class="stat-box wrong"><div class="sv" id="r-wrong">0</div><div class="sl">Wrong</div></div>
+      <div class="stat-box pct"><div class="sv" id="r-pct">0%</div><div class="sl">Accuracy</div></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-again" onclick="playAgain()">🔄 Play Again</button>
+      <button class="btn-purple" style="flex:1;margin-top:0" onclick="showPage('dashboard-page')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, serverTimestamp, getDoc, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyDMStfXhQtbOQcBfex9cJYaiu_iOfyu2cw",
+  authDomain: "learn-zone-1bf6b.firebaseapp.com",
+  projectId: "learn-zone-1bf6b",
+  storageBucket: "learn-zone-1bf6b.firebasestorage.app",
+  messagingSenderId: "960185532443",
+  appId: "1:960185532443:web:d29a4b2b622a83fa6278be"
+});
+
+const db = getFirestore(app);
+
+// ── State ──────────────────────────────────────────────────
+let currentUser = null, currentMode = 'game', currentSet = null;
+let qIdx = 0, score = 0, streak = 0, correct = 0, wrong = 0;
+let timer = null, timeLeft = 0, answered = false;
+let studyStreak = 0, studyCorrect = 0, studyPool = [], studyIdx = 0;
+let lastSetJson = null;
+
+const SHAPES = ['▲','●','■','✦'];
+
+// ── Helpers ────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
+
+// Hash password using SHA-256 via Web Crypto API
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+window.showToast = function(msg, d=2400){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), d);
+};
+
+window.showPage = function(pid, mode){
+  if(mode) currentMode = mode;
+  document.querySelectorAll('.page').forEach(p=>{ p.style.display='none'; p.classList.remove('active'); });
+  const pg = document.getElementById(pid);
+  pg.style.display = 'flex';
+  pg.classList.add('active');
+  if(pid==='dashboard-page') loadDash();
+  if(pid==='sets-page') loadSetsPage();
+};
+
+// ── Session persistence ────────────────────────────────────
+function saveSession(username, uid) {
+  localStorage.setItem('lz_user', JSON.stringify({ username, uid }));
+}
+
+function loadSession() {
+  try {
+    const s = localStorage.getItem('lz_user');
+    return s ? JSON.parse(s) : null;
+  } catch { return null; }
+}
+
+function clearSession() {
+  localStorage.removeItem('lz_user');
+}
+
+function setLoggedIn(username, uid) {
+  currentUser = { username, uid };
+  document.getElementById('nav-uname').textContent = username;
+  document.getElementById('sets-nav-uname').textContent = username;
+  document.getElementById('dash-greeting').textContent = `Hey, ${username}! 👋`;
+  saveSession(username, uid);
+  showPage('dashboard-page');
+}
+
+// ── Auth tab ───────────────────────────────────────────────
+let tabMode = 'login';
+
+window.switchTab = function(tab){
+  tabMode = tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(tab==='login'&&i===0)||(tab==='signup'&&i===1)));
+  document.getElementById('auth-btn').textContent = tab==='login' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-err').style.display = 'none';
+};
+
+window.handleAuth = async function(){
+  const username = document.getElementById('auth-user').value.trim().toLowerCase();
+  const password = document.getElementById('auth-pass').value;
+  const err = document.getElementById('auth-err');
+  const btn = document.getElementById('auth-btn');
+
+  err.style.display = 'none';
+
+  if(!username || !password) {
+    err.textContent = 'Fill in all fields.';
+    err.style.display = 'block';
+    return;
+  }
+  if(password.length < 6) {
+    err.textContent = 'Password must be at least 6 characters.';
+    err.style.display = 'block';
+    return;
+  }
+  if(!/^[a-zA-Z0-9_]+$/.test(username)) {
+    err.textContent = 'Username: letters, numbers, underscores only.';
+    err.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Please wait…';
+
+  try {
+    const passwordHash = await hashPassword(password);
+    const userDocRef = doc(db, 'users', username);
+    const userSnap = await getDoc(userDocRef);
+
+    if(tabMode === 'signup') {
+      if(userSnap.exists()) {
+        err.textContent = 'Username already taken. Choose another.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+        return;
+      }
+      // Create new user
+      await setDoc(userDocRef, {
+        username,
+        passwordHash,
+        createdAt: serverTimestamp()
+      });
+      setLoggedIn(username, username);
+      showToast('Account created! Welcome 🎉');
+
+    } else {
+      // Sign in
+      if(!userSnap.exists()) {
+        err.textContent = 'Username not found.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        return;
+      }
+      const userData = userSnap.data();
+      if(userData.passwordHash !== passwordHash) {
+        err.textContent = 'Incorrect password.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        return;
+      }
+      setLoggedIn(username, username);
+    }
+
+  } catch(e) {
+    console.error('Auth error:', e);
+    // Show the real error so we can diagnose it
+    err.textContent = `Error: ${e.code || e.message || String(e)}`;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = tabMode === 'login' ? 'Sign In' : 'Create Account';
+  }
+};
+
+window.logout = function(){
+  currentUser = null;
+  clearSession();
+  document.querySelectorAll('.page').forEach(p=>{ p.style.display='none'; p.classList.remove('active'); });
+  const ap = document.getElementById('auth-page');
+  ap.style.display = 'flex';
+  ap.classList.add('active');
+  document.getElementById('auth-btn').textContent = 'Sign In';
+  document.getElementById('auth-btn').disabled = false;
+  document.getElementById('auth-err').style.display = 'none';
+  document.getElementById('auth-user').value = '';
+  document.getElementById('auth-pass').value = '';
+};
+
+// ── Firestore sets ─────────────────────────────────────────
+async function getSets(){
+  if(!currentUser) return [];
+  const snap = await getDocs(query(collection(db,'sets'), where('uid','==', currentUser.uid)));
+  return snap.docs.map(d=>({id:d.id,...d.data()}));
+}
+
+async function loadDash(){
+  const el = document.getElementById('dash-sets');
+  el.innerHTML='<div class="loading">Loading…</div>';
+  try{
+    const sets = await getSets();
+    if(!sets.length){
+      el.innerHTML=`<div class="empty-state"><div class="e-icon">📭</div><h4>No sets yet</h4><p>Create your first set to get started.</p></div>`;
+      return;
+    }
+    const grid = document.createElement('div');
+    grid.className = 'sets-mini';
+    sets.slice(0,6).forEach(s=>{
+      const c = document.createElement('div');
+      c.className = 'set-mini-card';
+      c.innerHTML = `<h4>${esc(s.title)}</h4><p>${(s.questions||[]).length} question${(s.questions||[]).length!==1?'s':''}</p>`;
+      grid.appendChild(c);
+    });
+    el.innerHTML = '';
+    el.appendChild(grid);
+  } catch(e) {
+    console.error(e);
+    el.innerHTML = '<div class="loading" style="color:#b91c1c">Failed to load.</div>';
+  }
+}
+
+async function loadSetsPage(){
+  const mode = currentMode;
+  document.getElementById('sets-page-title').textContent = mode==='game' ? '🎮 Game Mode — Pick a Set' : '📚 Study Mode — Pick a Set';
+  const grid = document.getElementById('sets-full-grid');
+  grid.innerHTML = '<div class="loading">Loading…</div>';
+  try{
+    const sets = await getSets();
+    grid.innerHTML = '';
+    if(!sets.length){
+      grid.innerHTML = `<div style="padding:28px"><div class="empty-state"><div class="e-icon">📭</div><h4>No sets</h4><p>Create one from the dashboard.</p></div></div>`;
+      return;
+    }
+    sets.forEach(s=>{
+      const c = document.createElement('div');
+      c.className = 'set-full-card';
+      const qc = (s.questions||[]).length;
+      c.innerHTML = `
+        <h3>${esc(s.title)}</h3>
+        <div class="q-count">${qc} question${qc!==1?'s':''}</div>
+        <div class="card-actions">
+          <button class="btn-card game" onclick='startGame(${JSON.stringify(JSON.stringify(s))})'>🎮 Game</button>
+          <button class="btn-card study" onclick='startStudy(${JSON.stringify(JSON.stringify(s))})'>📚 Study</button>
+          <button class="btn-card del" onclick="deleteSet('${s.id}',this)">🗑</button>
+        </div>`;
+      grid.appendChild(c);
+    });
+  } catch(e) {
+    console.error(e);
+    grid.innerHTML = '<div class="loading" style="color:#b91c1c">Failed to load.</div>';
+  }
+}
+
+window.deleteSet = async function(id, btn){
+  if(!confirm('Delete this set?')) return;
+  try{
+    await deleteDoc(doc(db,'sets',id));
+    btn.closest('.set-full-card').remove();
+    showToast('Deleted.');
+    loadDash();
+  } catch{ showToast('Failed to delete.'); }
+};
+
+// ── Builder ────────────────────────────────────────────────
+let qCount = 0;
+const DOTS = ['a','b','c','d'];
+
+window.addQuestion = function(){
+  qCount++;
+  const id = qCount;
+  const list = document.getElementById('q-list');
+  const div = document.createElement('div');
+  div.className='q-card';
+  div.dataset.qid = id;
+  div.innerHTML=`
+    <button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+    <div class="q-card-num">Question ${id}</div>
+    <input class="q-input" name="q-${id}" placeholder="Type your question…">
+    <div class="ans-grid">
+      ${['A','B','C','D'].map((l,i)=>`
+        <div class="ans-row" id="arow-${id}-${i}">
+          <div class="ans-dot ${DOTS[i]}">${l}</div>
+          <input type="text" name="a-${id}-${i}" placeholder="Answer ${l}…">
+          <input type="radio" name="cor-${id}" value="${i}" class="ans-check" title="Correct answer" onchange="markRow(${id})">
+        </div>`).join('')}
+    </div>`;
+  list.appendChild(div);
+};
+
+window.markRow = function(id){
+  [0,1,2,3].forEach(i=>{
+    const row = document.getElementById(`arow-${id}-${i}`);
+    const r = row.querySelector('input[type=radio]');
+    row.classList.toggle('is-correct', r && r.checked);
+  });
+};
+
+window.saveSet = async function(){
+  const title = document.getElementById('set-title').value.trim();
+  if(!title){ showToast('Add a title!'); return; }
+  const cards = document.querySelectorAll('.q-card');
+  if(!cards.length){ showToast('Add at least one question!'); return; }
+  const questions = [];
+  let valid = true;
+  cards.forEach(c=>{
+    const qid = c.dataset.qid;
+    const qt = c.querySelector(`input[name="q-${qid}"]`).value.trim();
+    const ans = [0,1,2,3].map(i=>c.querySelector(`input[name="a-${qid}-${i}"]`).value.trim());
+    const cor = c.querySelector(`input[name="cor-${qid}"]:checked`);
+    if(!qt || ans.some(a=>!a) || !cor){ valid=false; return; }
+    questions.push({ question:qt, answers:ans, correct:parseInt(cor.value) });
+  });
+  if(!valid){ showToast('Fill in all fields and mark a correct answer for each.'); return; }
+  try{
+    await addDoc(collection(db,'sets'),{
+      uid: currentUser.uid,
+      title,
+      questions,
+      createdAt: serverTimestamp()
+    });
+    showToast('Set saved! 🎉');
+    document.getElementById('set-title').value = '';
+    document.getElementById('q-list').innerHTML = '';
+    qCount = 0;
+    showPage('dashboard-page');
+  } catch(e) {
+    console.error(e);
+    showToast('Failed to save. Try again.');
+  }
+};
+
+// ── Game ───────────────────────────────────────────────────
+window.startGame = function(sj){
+  currentSet = JSON.parse(sj);
+  if(!currentSet.questions?.length){ showToast('No questions in this set!'); return; }
+  lastSetJson = sj;
+  qIdx=0; score=0; streak=0; correct=0; wrong=0; answered=false;
+  document.getElementById('game-title').textContent = currentSet.title;
+  showPage('game-page');
+  renderQ();
+};
+
+function renderQ(){
+  const qs = currentSet.questions;
+  if(qIdx >= qs.length){ endGame(); return; }
+  const q = qs[qIdx];
+  answered = false;
+  document.getElementById('q-text').textContent = q.question;
+  document.getElementById('game-prog').style.width = `${(qIdx/qs.length)*100}%`;
+  document.getElementById('game-fb').style.display = 'none';
+  document.getElementById('game-score-pill').textContent = `${score} pts`;
+  document.getElementById('game-streak-pill').textContent = `${streak}🔥`;
+
+  const cont = document.getElementById('ans-tiles');
+  cont.innerHTML = '';
+  q.answers.forEach((ans,i)=>{
+    const b = document.createElement('button');
+    b.className = 'tile-btn';
+    b.dataset.i = i;
+    b.innerHTML = `<span class="t-shape">${SHAPES[i]}</span>${esc(ans)}`;
+    b.onclick = ()=>pick(i, q.correct);
+    cont.appendChild(b);
+  });
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timer);
+  timeLeft = 20;
+  updTimer();
+  timer = setInterval(()=>{
+    timeLeft--;
+    updTimer();
+    if(timeLeft <= 0){ clearInterval(timer); if(!answered) timeUp(); }
+  }, 1000);
+}
+
+function updTimer(){
+  const el = document.getElementById('timer');
+  el.textContent = timeLeft;
+  el.classList.toggle('warn', timeLeft<=5);
+}
+
+function pick(idx, cor){
+  if(answered) return;
+  answered = true;
+  clearInterval(timer);
+  const btns = document.querySelectorAll('.tile-btn');
+  btns.forEach(b=>b.disabled=true);
+  const ok = idx===cor;
+  btns.forEach((b,i)=>{
+    if(i===cor) b.classList.add('correct');
+    else if(i===idx && !ok) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const fb = document.getElementById('game-fb');
+  fb.style.display = 'block';
+  if(ok){
+    streak++; correct++;
+    const pts = Math.max(100, timeLeft*50) * (streak>=3 ? 2 : 1);
+    score += pts;
+    fb.className = 'feedback-strip ok';
+    fb.textContent = streak>=3 ? `🔥 Correct! +${pts} pts (${streak}x streak!)` : `✓ Correct! +${pts} pts`;
+  } else {
+    streak = 0; wrong++;
+    fb.className = 'feedback-strip bad';
+    fb.textContent = `✗ Wrong — Answer: ${currentSet.questions[qIdx].answers[cor]}`;
+  }
+  document.getElementById('game-score-pill').textContent = `${score} pts`;
+  document.getElementById('game-streak-pill').textContent = `${streak}🔥`;
+  setTimeout(()=>{ qIdx++; renderQ(); }, 1800);
+}
+
+function timeUp(){
+  answered = true;
+  const q = currentSet.questions[qIdx];
+  const btns = document.querySelectorAll('.tile-btn');
+  btns.forEach((b,i)=>{ b.disabled=true; if(i===q.correct) b.classList.add('correct'); else b.classList.add('dim'); });
+  streak = 0; wrong++;
+  const fb = document.getElementById('game-fb');
+  fb.style.display = 'block';
+  fb.className = 'feedback-strip bad';
+  fb.textContent = `⏰ Time's up — Answer: ${q.answers[q.correct]}`;
+  setTimeout(()=>{ qIdx++; renderQ(); }, 1800);
+}
+
+function endGame(){
+  clearInterval(timer);
+  const total = correct+wrong, pct = total ? Math.round((correct/total)*100) : 0;
+  document.getElementById('r-trophy').textContent = pct>=80?'🏆':pct>=50?'🎯':'📚';
+  document.getElementById('r-title').textContent = pct>=80?'Amazing!':pct>=50?'Good job!':'Keep going!';
+  document.getElementById('r-score').textContent = score.toLocaleString();
+  document.getElementById('r-correct').textContent = correct;
+  document.getElementById('r-wrong').textContent = wrong;
+  document.getElementById('r-pct').textContent = pct+'%';
+  showPage('results-page');
+}
+
+window.playAgain = function(){ if(lastSetJson) startGame(lastSetJson); };
+window.quitGame  = function(){ clearInterval(timer); showPage('dashboard-page'); };
+
+// ── Study ──────────────────────────────────────────────────
+window.startStudy = function(sj){
+  currentSet = JSON.parse(sj);
+  if(!currentSet.questions?.length){ showToast('No questions!'); return; }
+  studyStreak=0; studyCorrect=0; studyIdx=0;
+  studyPool = shuffle([...currentSet.questions]);
+  document.getElementById('study-title').textContent = currentSet.title;
+  document.getElementById('study-done').style.display = 'none';
+  document.getElementById('study-q-card').style.display = 'block';
+  document.getElementById('study-tiles').style.display = 'grid';
+  showPage('study-page');
+  renderStudy();
+};
+
+function renderStudy(){
+  if(studyStreak >= 3){
+    document.getElementById('study-done').style.display = 'block';
+    document.getElementById('study-q-card').style.display = 'none';
+    document.getElementById('study-tiles').style.display = 'none';
+    document.getElementById('study-fb').style.display = 'none';
+    document.getElementById('streak-banner').style.display = 'none';
+    return;
+  }
+  if(studyIdx >= studyPool.length){ studyPool=shuffle([...currentSet.questions]); studyIdx=0; }
+  const q = studyPool[studyIdx];
+  document.getElementById('study-q-label').textContent = `Question ${studyCorrect+1}`;
+  document.getElementById('study-q-text').textContent = q.question;
+  document.getElementById('study-fb').style.display = 'none';
+  document.getElementById('study-streak-pill').textContent = `${studyStreak}🔥`;
+  const sb = document.getElementById('streak-banner');
+  sb.textContent = `🔥 ${studyStreak} in a row!`;
+  sb.style.display = studyStreak>0 ? 'block' : 'none';
+
+  const cont = document.getElementById('study-tiles');
+  cont.innerHTML = '';
+  q.answers.forEach((ans,i)=>{
+    const b = document.createElement('button');
+    b.className = 'study-tile';
+    b.dataset.i = i;
+    b.innerHTML = `<span class="t-shape">${SHAPES[i]}</span>${esc(ans)}`;
+    b.onclick = ()=>pickStudy(i, q.correct, q);
+    cont.appendChild(b);
+  });
+}
+
+function pickStudy(idx, cor, q){
+  const btns = document.querySelectorAll('.study-tile');
+  btns.forEach(b=>b.disabled=true);
+  const ok = idx===cor;
+  btns.forEach((b,i)=>{
+    if(i===cor) b.classList.add('correct');
+    else if(i===idx && !ok) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const fb = document.getElementById('study-fb');
+  fb.style.display = 'block';
+  if(ok){
+    studyStreak++; studyCorrect++;
+    fb.className = 'feedback-strip ok';
+    fb.textContent = studyStreak>=3 ? '🎉 3 in a row — set complete!' : `✓ Correct! ${3-studyStreak} more to go`;
+  } else {
+    studyStreak = 0;
+    fb.className = 'feedback-strip bad';
+    fb.textContent = `✗ Not quite — Answer: ${q.answers[cor]}`;
+  }
+  document.getElementById('study-streak-pill').textContent = `${studyStreak}🔥`;
+  studyIdx++;
+  setTimeout(renderStudy, 1700);
+}
+
+// ── Boot ───────────────────────────────────────────────────
+(function init(){
+  const session = loadSession();
+  if(session){
+    currentUser = { username: session.username, uid: session.uid };
+    document.getElementById('nav-uname').textContent = session.username;
+    document.getElementById('sets-nav-uname').textContent = session.username;
+    document.getElementById('dash-greeting').textContent = `Hey, ${session.username}! 👋`;
+    showPage('dashboard-page');
+  } else {
+    const ap = document.getElementById('auth-page');
+    ap.style.display = 'flex';
+    ap.classList.add('active');
+  }
+  addQuestion();
+})();
+</script>
+</body>
+</html>
