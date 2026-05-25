@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Learn Zone</title>
 <!-- Custom embedded SVG Favicon matching the graduation cap logo -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Cpath d='M16 9l9 4.5-9 4.5-9-4.5z' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 16v3c0 1.5 1.5 2.5 6 2.5s6-1 6-2.5v-3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 14v4.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link class="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Cpath d='M16 9l9 4.5-9 4.5-9-4.5z' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 16v3c0 1.5 1.5 2.5 6 2.5s6-1 6-2.5v-3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 14v4.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root {
   --k1:#e63946; --k2:#457b9d; --k3:#e9c46a; --k4:#2a9d8f;
@@ -1595,12 +1595,20 @@ window.selectOrder = (ord) => {
   playOrder = ord;
   document.getElementById('order-standard').classList.toggle('sel', ord === 'standard');
   document.getElementById('order-random').classList.toggle('sel', ord === 'random');
+  if (ord === 'random') {
+    selectEndCondition('time');
+  }
 };
 
 window.selectEndCondition = (cond) => {
   playEndCondition = cond;
   document.getElementById('end-complete').classList.toggle('sel', cond === 'complete');
   document.getElementById('end-time').classList.toggle('sel', cond === 'time');
+  if (cond === 'complete' && playOrder === 'random') {
+    playOrder = 'standard';
+    document.getElementById('order-standard').classList.add('sel');
+    document.getElementById('order-random').classList.remove('sel');
+  }
 };
 
 window.handleSetupStart = () => {
@@ -1749,7 +1757,7 @@ window.startGame = (sj, gameType) => {
 function renderQ() {
   const qs=sessionQuestions;
   if(qIdx>=qs.length){
-    if (playEndCondition === 'time') {
+    if (playEndCondition === 'time' || playOrder === 'random') {
       qIdx=0;
       // Re-shuffle if randomized order is chosen
       if (playOrder === 'random') {
@@ -1853,7 +1861,7 @@ function startGlobalSessionTimer(isStudy) {
   if (sessionEndTimer) clearInterval(sessionEndTimer);
   const pill = document.getElementById(isStudy ? 'study-session-timer-pill' : 'game-session-timer-pill');
   
-  if (playEndCondition !== 'time') {
+  if (playEndCondition !== 'time' && playOrder !== 'random') {
     if (pill) pill.style.display = 'none';
     return;
   }
@@ -2305,7 +2313,7 @@ window.startStudy = sj => {
 
 function renderStudy(){
   if(studyIdx>=studyPool.length){
-    if (playEndCondition === 'time') {
+    if (playEndCondition === 'time' || playOrder === 'random') {
       studyIdx = 0;
       if (playOrder === 'random') {
         studyPool = shuffle([...currentSet.questions]);
