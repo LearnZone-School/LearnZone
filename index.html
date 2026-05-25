@@ -4,24 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Learn Zone</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --purple: #46178f;
-  --purple-light: #7c3aed;
-  --red:    #e21b3c;
-  --blue:   #1368ce;
-  --yellow: #d89e00;
-  --green:  #26890c;
-  --red-bg:    #e21b3c;
-  --blue-bg:   #1368ce;
-  --yellow-bg: #f0aa00;
-  --green-bg:  #2fa90f;
-  --bg: #f0f0f0;
-  --white: #ffffff;
-  --text: #333333;
-  --muted: #666666;
-  --radius: 8px;
+  --accent: #5b4cf5;
+  --accent2: #7c6fff;
+  --red: #e03e3e;
+  --blue: #2563eb;
+  --yellow: #d97706;
+  --green: #16a34a;
+  --red-bg: #dc2626;
+  --blue-bg: #1d4ed8;
+  --yellow-bg: #b45309;
+  --green-bg: #15803d;
+  --bg: #f4f3f0;
+  --surface: #ffffff;
+  --surface2: #eeede9;
+  --border: rgba(0,0,0,0.09);
+  --text: #1a1a1a;
+  --text2: #5a5a5a;
+  --text3: #8a8a8a;
+  --radius: 10px;
+  --nav-h: 58px;
+  --music-vol: 0.4;
+  --sfx-vol: 0.7;
+}
+
+[data-theme="dark"] {
+  --bg: #111110;
+  --surface: #1c1c1a;
+  --surface2: #242422;
+  --border: rgba(255,255,255,0.08);
+  --text: #f0efe8;
+  --text2: #a8a89a;
+  --text3: #6a6a60;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,965 +45,881 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
 }
 
-.page { min-height: 100vh; display: none; }
-.page.active { display: flex; flex-direction: column; }
+.page { min-height: 100vh; display: none; flex-direction: column; }
+.page.active { display: flex; }
 
-/* ── AUTH ─────────────────────────────────────────────────── */
+/* SVG Icon component */
+.icon { display: inline-block; vertical-align: middle; }
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.5;
+}
+
+/* ── AUTH ── */
 #auth-page {
-  background: var(--purple);
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  background: var(--accent);
+  align-items: center; justify-content: center; padding: 20px;
 }
 
 .auth-card {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 40px 36px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  animation: fadeUp 0.35s ease;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 44px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+  position: relative; z-index: 1;
 }
 
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(16px); }
-  to   { opacity:1; transform:translateY(0); }
+.auth-brand {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
 }
 
-.auth-logo {
-  text-align: center;
-  margin-bottom: 28px;
+.brand-mark {
+  width: 38px; height: 38px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
 }
 
-.auth-logo h1 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--purple);
+.auth-brand h1 {
+  font-family: 'Space Mono', monospace;
+  font-size: 22px; font-weight: 700;
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
-.auth-logo p {
-  color: var(--muted);
-  font-size: 13px;
-  margin-top: 4px;
-  font-weight: 500;
+.auth-tagline {
+  font-size: 13px; color: var(--text2);
+  margin-bottom: 28px; font-weight: 400;
 }
 
 .tab-row {
   display: flex;
-  border-bottom: 2px solid #e5e5e5;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 3px;
   margin-bottom: 24px;
+  gap: 2px;
 }
 
 .tab-btn {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: 10px 0 12px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
-  transition: all 0.15s;
+  flex: 1; background: none; border: none;
+  padding: 8px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer;
+  border-radius: 6px; transition: all 0.15s;
 }
 
 .tab-btn.active {
-  color: var(--purple);
-  border-bottom-color: var(--purple);
+  background: var(--surface);
+  color: var(--text); font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-.field { margin-bottom: 16px; }
-
+.field { margin-bottom: 14px; }
 .field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--text3); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 6px;
 }
 
 .field input {
-  width: 100%;
-  border: 2px solid #e5e5e5;
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
-  outline: none;
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  color: var(--text); outline: none; background: var(--surface2);
   transition: border-color 0.15s;
-  background: #fafafa;
 }
 
-.field input:focus { border-color: var(--purple); background: #fff; }
+.field input:focus { border-color: var(--accent); background: var(--surface); }
 
 .auth-err {
-  background: #fff0f0;
-  border: 1.5px solid #fca5a5;
-  color: #b91c1c;
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  display: none;
+  background: #fff0f0; border: 1px solid #fca5a5; color: #b91c1c;
+  border-radius: var(--radius); padding: 10px 14px;
+  font-size: 13px; font-weight: 600; margin-bottom: 14px; display: none;
 }
 
-.btn-purple {
-  width: 100%;
-  background: var(--purple);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  padding: 14px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-  margin-top: 4px;
+[data-theme="dark"] .auth-err { background: #3f1515; border-color: #7f2020; color: #fca5a5; }
+
+.btn-primary {
+  width: 100%; background: var(--accent); color: #fff;
+  border: none; border-radius: var(--radius); padding: 13px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; margin-top: 4px;
+  letter-spacing: 0.01em;
 }
 
-.btn-purple:hover { background: #5a1fad; }
-.btn-purple:active { transform: scale(0.98); }
-.btn-purple:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary:hover { background: #4a3de0; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ── NAVBAR ───────────────────────────────────────────────── */
+/* ── NAVBAR ── */
 .navbar {
-  background: var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  height: 56px;
-  flex-shrink: 0;
+  height: var(--nav-h); background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0; position: relative; z-index: 10;
 }
 
 .nav-logo {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.3px;
+  font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.3px; display: flex;
+  align-items: center; gap: 8px;
 }
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.nav-logo-mark {
+  width: 28px; height: 28px; background: var(--accent);
+  border-radius: 7px; display: flex; align-items: center; justify-content: center;
 }
+
+.nav-right { display: flex; align-items: center; gap: 8px; }
 
 .nav-chip {
-  background: rgba(255,255,255,0.18);
-  color: #fff;
-  border-radius: 99px;
-  padding: 5px 14px;
-  font-size: 13px;
-  font-weight: 700;
+  background: var(--surface2); color: var(--text2);
+  border-radius: 99px; padding: 5px 14px; font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border);
 }
+
+.btn-icon {
+  width: 36px; height: 36px; background: none;
+  border: 1px solid var(--border); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; color: var(--text2);
+}
+
+.btn-icon:hover { background: var(--surface2); color: var(--text); }
 
 .btn-ghost {
-  background: transparent;
-  border: 2px solid rgba(255,255,255,0.5);
-  color: #fff;
-  border-radius: var(--radius);
-  padding: 6px 14px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text2); border-radius: var(--radius); padding: 7px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
 }
 
-.btn-ghost:hover { background: rgba(255,255,255,0.15); }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); }
 
-/* ── DASHBOARD ────────────────────────────────────────────── */
+/* ── SETTINGS PANEL ── */
+.settings-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+  z-index: 100; display: none; align-items: flex-start; justify-content: flex-end;
+  padding: 64px 16px 0;
+}
+
+.settings-overlay.open { display: flex; }
+
+.settings-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; width: 300px; padding: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden;
+}
+
+.settings-header {
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.settings-header h3 {
+  font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
+  color: var(--text);
+}
+
+.settings-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 18px; }
+
+.setting-row { display: flex; flex-direction: column; gap: 6px; }
+.setting-label {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.setting-control { display: flex; align-items: center; gap: 10px; }
+.setting-control input[type=range] {
+  flex: 1; -webkit-appearance: none; height: 4px;
+  background: var(--surface2); border-radius: 2px; outline: none;
+  border: 1px solid var(--border);
+}
+
+.setting-control input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  background: var(--accent); border-radius: 50%; cursor: pointer;
+}
+
+.setting-val {
+  font-family: 'Space Mono', monospace; font-size: 12px;
+  color: var(--text2); min-width: 30px; text-align: right;
+}
+
+.theme-toggle {
+  display: flex; background: var(--surface2); border-radius: 8px;
+  padding: 3px; gap: 2px;
+}
+
+.theme-opt {
+  flex: 1; padding: 7px 0; background: none; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--text2); cursor: pointer; border-radius: 6px; transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+
+.theme-opt.active {
+  background: var(--surface); color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ── DASHBOARD ── */
 #dashboard-page { background: var(--bg); }
 
 .dash-body {
-  flex: 1;
-  padding: 36px 28px;
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
+  flex: 1; padding: 32px 28px; max-width: 980px; margin: 0 auto; width: 100%;
 }
 
 .dash-hero {
-  background: var(--purple);
-  border-radius: 12px;
-  padding: 32px 36px;
-  color: #fff;
-  margin-bottom: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background: var(--accent); border-radius: 14px; padding: 32px 36px;
+  color: #fff; margin-bottom: 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  overflow: hidden; position: relative;
+}
+
+.dash-hero::before {
+  content: '';
+  position: absolute; right: -40px; top: -40px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+
+.dash-hero::after {
+  content: '';
+  position: absolute; right: 60px; bottom: -60px;
+  width: 160px; height: 160px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
 }
 
 .dash-hero h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 26px;
-  font-weight: 900;
-  margin-bottom: 6px;
+  font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700;
+  margin-bottom: 6px; line-height: 1.2;
 }
 
-.dash-hero p { font-size: 14px; opacity: 0.8; font-weight: 500; }
-.dash-hero .hero-emoji { font-size: 56px; }
+.dash-hero p { font-size: 14px; opacity: 0.75; font-weight: 400; }
+
+.hero-illus { position: relative; z-index: 1; flex-shrink: 0; }
 
 .section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 16px;
 }
 
 .section-head h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 17px;
-  font-weight: 800;
+  font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
   color: var(--text);
 }
 
-.btn-outline-purple {
-  background: transparent;
-  border: 2px solid var(--purple);
-  color: var(--purple);
-  border-radius: var(--radius);
-  padding: 8px 18px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.15s;
+.btn-outline {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text2); border-radius: var(--radius); padding: 7px 16px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
 }
 
-.btn-outline-purple:hover { background: var(--purple); color: #fff; }
+.btn-outline:hover { background: var(--surface); border-color: var(--accent); color: var(--accent); }
 
-.mode-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 32px;
-}
+.mode-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
 
 .mode-tile {
-  background: var(--white);
-  border-radius: 10px;
-  padding: 24px 22px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  background: var(--surface); border-radius: 12px; padding: 24px 22px;
+  cursor: pointer; border: 1.5px solid var(--border); transition: all 0.15s;
 }
 
 .mode-tile:hover {
-  border-color: var(--purple);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  border-color: var(--accent); transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(91,76,245,0.1);
 }
 
-.mode-tile .tile-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+.tile-icon-wrap {
+  width: 48px; height: 48px; border-radius: 12px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.tile-icon-wrap.game { background: #ede9fe; }
+.tile-icon-wrap.study { background: #fef3c7; }
+[data-theme="dark"] .tile-icon-wrap.game { background: #2a2060; }
+[data-theme="dark"] .tile-icon-wrap.study { background: #2a2000; }
 
 .mode-tile h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
+  font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
 }
 
-.mode-tile p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  font-weight: 500;
+.mode-tile p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+.mode-tag {
+  display: inline-block; margin-top: 10px; padding: 3px 10px;
+  border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
 }
 
-.tag {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 3px 10px;
-  border-radius: 99px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+.mode-tag.purple { background: #ede9fe; color: #5b4cf5; }
+.mode-tag.amber  { background: #fef3c7; color: #92400e; }
+[data-theme="dark"] .mode-tag.purple { background: #2a2060; color: #a899ff; }
+[data-theme="dark"] .mode-tag.amber  { background: #2a2000; color: #fbbf24; }
 
-.tag.purple { background: #ede9fe; color: var(--purple); }
-.tag.amber  { background: #fef3c7; color: #92400e; }
-
-.sets-mini {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
+.sets-mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
 
 .set-mini-card {
-  background: var(--white);
-  border-radius: 10px;
-  padding: 18px 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border-left: 4px solid var(--purple);
+  background: var(--surface); border-radius: 10px; padding: 18px 16px;
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
 }
 
 .set-mini-card h4 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  margin-bottom: 4px;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+  margin-bottom: 4px; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.set-mini-card p { font-size: 12px; color: var(--muted); font-weight: 500; }
+.set-mini-card p { font-size: 12px; color: var(--text2); }
 
 .empty-state {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--muted);
-  background: var(--white);
-  border-radius: 10px;
+  text-align: center; padding: 56px 20px; color: var(--text2);
+  background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
 }
 
-.empty-state .e-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state h4 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
-.empty-state p { font-size: 13px; font-weight: 500; }
+.empty-state h4 {
+  font-family: 'Space Mono', monospace; font-size: 17px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px; margin-top: 16px;
+}
 
-/* ── SETS PICKER ──────────────────────────────────────────── */
+.empty-state p { font-size: 13px; }
+
+/* ── SETS PICKER ── */
 #sets-page { background: var(--bg); }
 
 .subbar {
-  background: var(--white);
-  border-bottom: 2px solid #e5e5e5;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; padding: 12px 24px;
   flex-shrink: 0;
 }
 
 .subbar h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
+  font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
+  color: var(--text);
 }
 
 .btn-back {
-  background: none;
-  border: none;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--purple);
-  cursor: pointer;
-  padding: 6px 10px;
-  border-radius: var(--radius);
-  transition: background 0.15s;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600; color: var(--accent); cursor: pointer;
+  padding: 6px 10px; border-radius: var(--radius); transition: background 0.15s;
+  display: flex; align-items: center; gap: 4px;
 }
 
-.btn-back:hover { background: #ede9fe; }
+.btn-back:hover { background: var(--surface2); }
 
 .sets-full-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-  padding: 28px 28px;
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr));
+  gap: 16px; padding: 28px; max-width: 980px; margin: 0 auto; width: 100%;
 }
 
 .set-full-card {
-  background: var(--white);
-  border-radius: 10px;
-  padding: 22px 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  transition: all 0.15s;
-  border-top: 4px solid var(--purple);
+  background: var(--surface); border-radius: 12px; padding: 22px 20px;
+  border: 1px solid var(--border); transition: all 0.15s;
+  border-top: 3px solid var(--accent);
 }
 
-.set-full-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+.set-full-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 
 .set-full-card h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 4px;
+  font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700;
+  color: var(--text); margin-bottom: 4px;
 }
 
-.set-full-card .q-count { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 16px; }
+.set-full-card .q-count { font-size: 12px; color: var(--text2); margin-bottom: 18px; }
 
 .card-actions { display: flex; gap: 8px; }
 
 .btn-card {
-  flex: 1;
-  padding: 9px 8px;
-  border-radius: var(--radius);
-  font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s;
+  flex: 1; padding: 9px 8px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none; transition: all 0.15s;
 }
 
-.btn-card.game  { background: var(--purple); color: #fff; }
-.btn-card.game:hover { background: #5a1fad; }
+.btn-card.game  { background: var(--accent); color: #fff; }
+.btn-card.game:hover { background: #4a3de0; }
 .btn-card.study { background: #fef3c7; color: #92400e; }
 .btn-card.study:hover { background: #fde68a; }
-.btn-card.del   { background: #fee2e2; color: #b91c1c; }
-.btn-card.del:hover { background: #fecaca; }
+.btn-card.del   { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.btn-card.del:hover { background: #fee2e2; color: #b91c1c; }
+[data-theme="dark"] .btn-card.study { background: #2a2000; color: #fbbf24; }
 
-/* ── BUILDER ──────────────────────────────────────────────── */
+/* ── BUILDER ── */
 #set-builder-page { background: var(--bg); }
 
 .builder-body {
-  flex: 1;
-  padding: 28px;
-  max-width: 760px;
-  margin: 0 auto;
-  width: 100%;
+  flex: 1; padding: 28px; max-width: 760px; margin: 0 auto; width: 100%;
 }
 
 .builder-input {
-  width: 100%;
-  border: 2px solid #e5e5e5;
-  border-radius: var(--radius);
-  padding: 13px 16px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  outline: none;
-  margin-bottom: 20px;
-  background: #fff;
-  transition: border-color 0.15s;
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 13px 16px; font-family: 'Space Mono', monospace;
+  font-size: 14px; font-weight: 700; color: var(--text); outline: none;
+  margin-bottom: 20px; background: var(--surface); transition: border-color 0.15s;
 }
 
-.builder-input:focus { border-color: var(--purple); }
+.builder-input:focus { border-color: var(--accent); }
+[data-theme="dark"] .builder-input { background: var(--surface); }
 
 .q-card {
-  background: var(--white);
-  border-radius: 10px;
-  padding: 22px 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  position: relative;
-  border-top: 3px solid var(--purple);
+  background: var(--surface); border-radius: 10px; padding: 22px 20px;
+  margin-bottom: 14px; border: 1px solid var(--border); position: relative;
+  border-top: 3px solid var(--accent);
 }
 
 .q-card-num {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--purple);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
 }
 
 .q-input {
-  width: 100%;
-  border: 2px solid #e5e5e5;
-  border-radius: var(--radius);
-  padding: 11px 14px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  outline: none;
-  margin-bottom: 14px;
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  color: var(--text); outline: none; margin-bottom: 14px; background: var(--surface2);
   transition: border-color 0.15s;
 }
 
-.q-input:focus { border-color: var(--purple); }
+.q-input:focus { border-color: var(--accent); }
 
 .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .ans-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: var(--radius);
-  padding: 6px 10px 6px 6px;
-  border: 2px solid #e5e5e5;
-  background: #fafafa;
-  transition: border-color 0.15s;
+  display: flex; align-items: center; gap: 8px;
+  border-radius: var(--radius); padding: 6px 10px 6px 6px;
+  border: 1.5px solid var(--border); background: var(--surface2); transition: border-color 0.15s;
 }
 
 .ans-row.is-correct { border-color: var(--green-bg); background: #f0fff4; }
+[data-theme="dark"] .ans-row.is-correct { background: #0a2a14; }
 
 .ans-dot {
-  width: 30px; height: 30px;
-  border-radius: 6px;
+  width: 30px; height: 30px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 13px; color: #fff;
-  flex-shrink: 0;
+  font-weight: 700; font-size: 11px; color: #fff; flex-shrink: 0;
 }
 
 .ans-dot.a { background: var(--red-bg); }
 .ans-dot.b { background: var(--blue-bg); }
-.ans-dot.c { background: var(--yellow-bg); color: #333; }
+.ans-dot.c { background: var(--yellow-bg); }
 .ans-dot.d { background: var(--green-bg); }
 
 .ans-row input[type=text], .ans-row input:not([type]) {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  outline: none;
-  min-width: 0;
+  flex: 1; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text); outline: none; min-width: 0;
 }
 
 .ans-check {
-  appearance: none;
-  width: 18px; height: 18px;
-  border: 2px solid #ccc;
-  border-radius: 50%;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.15s;
-  position: relative;
+  appearance: none; width: 18px; height: 18px;
+  border: 2px solid var(--border); border-radius: 50%;
+  cursor: pointer; flex-shrink: 0; transition: all 0.15s; position: relative;
 }
 
 .ans-check:checked { background: var(--green-bg); border-color: var(--green-bg); }
-.ans-check:checked::after { content:'✓'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:11px; color:#fff; font-weight:800; }
+.ans-check:checked::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 4px; height: 7px;
+  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+}
 
 .btn-del-q {
   position: absolute; top: 14px; right: 14px;
-  background: #fee2e2; border: none; color: #b91c1c;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text2);
   border-radius: 6px; width: 28px; height: 28px;
-  font-size: 14px; cursor: pointer; transition: background 0.15s;
+  font-size: 13px; cursor: pointer; transition: all 0.15s;
   display: flex; align-items: center; justify-content: center;
 }
-.btn-del-q:hover { background: #fecaca; }
+
+.btn-del-q:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
 
 .btn-add-q {
-  width: 100%;
-  background: #fff;
-  border: 2px dashed #ccc;
-  border-radius: var(--radius);
-  padding: 14px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted);
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.15s;
+  width: 100%; background: none; border: 1.5px dashed var(--border);
+  border-radius: var(--radius); padding: 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer;
+  margin-bottom: 20px; transition: all 0.15s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
 }
-.btn-add-q:hover { border-color: var(--purple); color: var(--purple); background: #faf8ff; }
 
-/* ── GAME PAGE ────────────────────────────────────────────── */
-#game-page { background: var(--purple); }
+.btn-add-q:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+
+/* ── GAME PAGE ── */
+#game-page { background: #0e0d14; }
 
 .game-top {
-  background: var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  flex-shrink: 0;
+  background: transparent; display: flex; align-items: center;
+  justify-content: space-between; padding: 16px 24px; flex-shrink: 0;
 }
 
 .game-top-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.85);
+  font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.6); max-width: 200px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.game-stat-pill {
-  background: rgba(255,255,255,0.18);
-  border-radius: 99px;
-  padding: 6px 16px;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  font-size: 14px;
+.game-pills { display: flex; align-items: center; gap: 8px; }
+
+.game-pill {
+  background: rgba(255,255,255,0.1); border-radius: 8px;
+  padding: 6px 14px; color: #fff;
+  font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.progress-wrap { height: 6px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
-.progress-fill { height: 100%; background: #fff; transition: width 0.5s ease; }
+.btn-quit {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6); border-radius: 8px; padding: 6px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+}
+
+.btn-quit:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+.progress-wrap { height: 3px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+.progress-fill { height: 100%; background: var(--accent2); transition: width 0.5s ease; }
 
 .game-center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 24px;
-  gap: 20px;
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 20px 24px; gap: 18px;
 }
 
-.timer-circle {
-  width: 72px; height: 72px;
-  border-radius: 50%;
-  background: var(--white);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--purple);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  transition: color 0.2s;
-  flex-shrink: 0;
+.timer-ring {
+  position: relative; width: 72px; height: 72px; flex-shrink: 0;
 }
 
-.timer-circle.warn { color: var(--red); }
+.timer-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+.timer-ring .ring-bg { stroke: rgba(255,255,255,0.1); fill: none; }
+.timer-ring .ring-fill { fill: none; stroke: #fff; stroke-linecap: round; transition: stroke-dashoffset 0.9s linear, stroke 0.3s; }
+.timer-ring .ring-fill.warn { stroke: #f87171; }
+
+.timer-num {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #fff;
+}
 
 .q-bubble {
-  background: var(--white);
-  border-radius: 10px;
-  padding: 28px 32px;
-  width: 100%;
-  max-width: 720px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(255,255,255,0.06); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+  padding: 28px 32px; width: 100%; max-width: 720px;
+  text-align: center; min-height: 100px;
+  display: flex; align-items: center; justify-content: center;
 }
 
-.q-bubble .q-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.35;
+.q-text {
+  font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 500;
+  color: #fff; line-height: 1.4;
 }
 
 .ans-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  width: 100%;
-  max-width: 720px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  width: 100%; max-width: 720px;
 }
 
 .tile-btn {
-  border: none;
-  border-radius: 10px;
-  padding: 0 20px;
-  height: 80px;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: filter 0.15s, transform 0.1s;
-  text-align: left;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.25);
+  border: none; border-radius: 10px; padding: 0 20px; height: 76px;
+  color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 14px;
+  transition: filter 0.15s, transform 0.1s; text-align: left;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3);
 }
 
-.tile-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
-.tile-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+.tile-btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.tile-btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
 .tile-btn:disabled { cursor: not-allowed; }
+.tile-btn[data-i="0"] { background: #dc2626; }
+.tile-btn[data-i="1"] { background: #1d4ed8; }
+.tile-btn[data-i="2"] { background: #b45309; }
+.tile-btn[data-i="3"] { background: #15803d; }
 
-.tile-btn[data-i="0"] { background: var(--red-bg); }
-.tile-btn[data-i="1"] { background: var(--blue-bg); }
-.tile-btn[data-i="2"] { background: var(--yellow-bg); color: #333; }
-.tile-btn[data-i="3"] { background: var(--green-bg); }
-
-.tile-btn .t-shape {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.18);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+.tile-shape {
+  width: 36px; height: 36px; background: rgba(0,0,0,0.18);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
-.tile-btn.correct { filter: brightness(1) !important; outline: 4px solid #fff; }
-.tile-btn.wrong   { filter: brightness(0.45) !important; }
-.tile-btn.dim     { filter: brightness(0.45) !important; }
+.tile-btn.correct { outline: 3px solid #fff; filter: brightness(1) !important; }
+.tile-btn.wrong   { filter: brightness(0.35) !important; }
+.tile-btn.dim     { filter: brightness(0.35) !important; }
 
 .feedback-strip {
-  width: 100%;
-  max-width: 720px;
-  border-radius: 10px;
-  padding: 14px 20px;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  text-align: center;
-  display: none;
+  width: 100%; max-width: 720px; border-radius: 10px; padding: 13px 20px;
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px;
+  text-align: center; display: none;
   animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-@keyframes popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+@keyframes popIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
 
-.feedback-strip.ok  { background: #d1fae5; color: #065f46; }
-.feedback-strip.bad { background: #fee2e2; color: #991b1b; }
+.feedback-strip.ok  { background: rgba(22,163,74,0.2); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+.feedback-strip.bad { background: rgba(220,38,38,0.2); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
 
-/* ── STUDY PAGE ───────────────────────────────────────────── */
-#study-page { background: #f5f5f5; }
+/* ── MINI-GAME OVERLAY ── */
+.minigame-overlay {
+  position: fixed; inset: 0; background: #0e0d14;
+  z-index: 200; display: none; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+}
+
+.minigame-overlay.open { display: flex; }
+
+.mg-header {
+  font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+  color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.mg-title {
+  font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: #fff;
+}
+
+.mg-timer-bar-wrap {
+  width: 400px; max-width: 90vw; height: 6px;
+  background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;
+}
+
+.mg-timer-bar {
+  height: 100%; background: var(--accent2); border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.mg-score { font-family: 'Space Mono', monospace; font-size: 48px; font-weight: 700; color: #fff; }
+
+.mg-pts-label { font-size: 13px; color: rgba(255,255,255,0.4); }
+
+/* Reaction tap game */
+.tap-target {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700;
+  color: #fff; transition: transform 0.1s, background 0.1s;
+  box-shadow: 0 0 0 0 rgba(91,76,245,0.4);
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(91,76,245,0.4); }
+  50% { box-shadow: 0 0 0 20px rgba(91,76,245,0); }
+}
+
+.tap-target:active { transform: scale(0.92); background: #4a3de0; }
+
+/* Memory match mini-game */
+.mem-grid {
+  display: grid; grid-template-columns: repeat(4, 72px); gap: 10px;
+}
+
+.mem-card {
+  width: 72px; height: 72px; border-radius: 10px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; transition: transform 0.15s; user-select: none;
+}
+
+.mem-card.flipped { background: rgba(255,255,255,0.18); }
+.mem-card.matched { background: rgba(22,163,74,0.3); border-color: rgba(74,222,128,0.4); cursor: default; }
+.mem-card:hover:not(.matched) { transform: scale(1.05); }
+
+/* Speed math game */
+.math-display {
+  font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;
+  color: #fff; text-align: center; line-height: 1.3;
+}
+
+.math-choices {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 320px;
+}
+
+.math-btn {
+  background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 16px; font-family: 'Space Mono', monospace;
+  font-size: 22px; font-weight: 700; color: #fff; cursor: pointer; transition: all 0.15s;
+}
+
+.math-btn:hover { background: rgba(255,255,255,0.18); }
+.math-btn.correct-mg { background: rgba(22,163,74,0.4); border-color: rgba(74,222,128,0.6); }
+.math-btn.wrong-mg   { background: rgba(220,38,38,0.4); border-color: rgba(248,113,113,0.6); }
+
+/* ── STUDY PAGE ── */
+#study-page { background: var(--bg); }
 
 .study-top {
-  background: #f0aa00;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  flex-shrink: 0;
+  background: #7c3aed; display: flex; align-items: center;
+  justify-content: space-between; padding: 14px 24px; flex-shrink: 0;
 }
 
 .study-top-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  color: #333;
+  font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #fff;
+  max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.study-stat-pill {
-  background: rgba(0,0,0,0.12);
-  border-radius: 99px;
-  padding: 6px 16px;
-  color: #333;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 800;
-  font-size: 14px;
+.study-pills { display: flex; align-items: center; gap: 8px; }
+
+.study-pill {
+  background: rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 14px;
+  color: #fff; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 13px;
 }
+
+.study-progress-wrap { height: 3px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+.study-progress-fill { height: 100%; background: #fff; transition: width 0.4s; }
 
 .study-center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 28px 24px;
-  gap: 20px;
-}
-
-.streak-banner {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  color: #92400e;
-  background: #fef3c7;
-  border-radius: 99px;
-  padding: 6px 20px;
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 28px 24px; gap: 18px;
 }
 
 .study-q-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 28px 32px;
-  width: 100%;
-  max-width: 680px;
-  text-align: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  border-top: 4px solid #f0aa00;
+  background: var(--surface); border-radius: 12px; padding: 28px 32px;
+  width: 100%; max-width: 680px; text-align: center;
+  border: 1px solid var(--border); border-top: 3px solid #7c3aed;
 }
 
 .study-q-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
 }
 
 .study-q-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.35;
+  font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 500;
+  color: var(--text); line-height: 1.4;
 }
 
+.study-timer {
+  font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700;
+  color: var(--text);
+}
+
+.study-timer.warn { color: #dc2626; }
+
 .study-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  width: 100%;
-  max-width: 680px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  width: 100%; max-width: 680px;
 }
 
 .study-tile {
-  border: none;
-  border-radius: 10px;
-  padding: 0 18px;
-  height: 72px;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  transition: filter 0.15s, transform 0.1s;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  border: none; border-radius: 10px; padding: 0 18px; height: 70px;
+  color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 12px;
+  text-align: left; transition: filter 0.15s, transform 0.1s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
 }
 
-.study-tile:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.study-tile:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .study-tile[data-i="0"] { background: var(--red-bg); }
 .study-tile[data-i="1"] { background: var(--blue-bg); }
-.study-tile[data-i="2"] { background: var(--yellow-bg); color: #333; }
+.study-tile[data-i="2"] { background: var(--yellow-bg); }
 .study-tile[data-i="3"] { background: var(--green-bg); }
+
 .study-tile .t-shape {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(0,0,0,0.15);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 7px;
+  background: rgba(0,0,0,0.18); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; flex-shrink: 0;
 }
-.study-tile.correct { outline: 4px solid #fff; filter: brightness(1) !important; }
-.study-tile.wrong   { filter: brightness(0.45) !important; }
-.study-tile.dim     { filter: brightness(0.45) !important; }
+
+.study-tile.correct { outline: 3px solid rgba(255,255,255,0.8); filter: brightness(1) !important; }
+.study-tile.wrong   { filter: brightness(0.35) !important; }
+.study-tile.dim     { filter: brightness(0.35) !important; }
 .study-tile:disabled { cursor: not-allowed; }
 
-.study-done {
-  background: #fff;
-  border-radius: 10px;
-  padding: 40px 32px;
-  text-align: center;
-  max-width: 480px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  display: none;
+.study-fb {
+  width: 100%; max-width: 680px; border-radius: 10px; padding: 12px 20px;
+  font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px;
+  text-align: center; display: none;
+  animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.study-done h3 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--green);
-  margin-bottom: 8px;
-}
+.study-fb.ok  { background: #dcfce7; color: #15803d; }
+.study-fb.bad { background: #fee2e2; color: #b91c1c; }
+[data-theme="dark"] .study-fb.ok  { background: #0a2a14; color: #4ade80; }
+[data-theme="dark"] .study-fb.bad { background: #2a0a0a; color: #f87171; }
 
-.study-done p { font-size: 14px; color: var(--muted); font-weight: 500; margin-bottom: 24px; }
-
-/* ── RESULTS PAGE ─────────────────────────────────────────── */
-#results-page { background: var(--purple); align-items: center; justify-content: center; }
+/* ── RESULTS ── */
+#results-page { background: #0e0d14; align-items: center; justify-content: center; }
 
 .results-card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 48px 40px;
-  max-width: 480px;
-  width: 100%;
-  margin: 20px;
-  text-align: center;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-  animation: fadeUp 0.35s ease;
+  background: var(--surface); border-radius: 16px; padding: 48px 44px;
+  max-width: 480px; width: 100%; margin: 20px; text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 
-.results-trophy { font-size: 64px; margin-bottom: 8px; }
+.results-icon { margin-bottom: 12px; }
 
 .results-card h2 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--text);
-  margin-bottom: 4px;
+  font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700;
+  color: var(--text); margin-bottom: 4px;
 }
 
 .results-score {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 60px;
-  font-weight: 900;
-  color: var(--purple);
-  line-height: 1.1;
-  margin: 12px 0 4px;
+  font-family: 'Space Mono', monospace; font-size: 64px; font-weight: 700;
+  color: var(--accent); line-height: 1; margin: 12px 0 4px;
 }
 
-.results-pts { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 24px; }
+.results-pts { font-size: 13px; color: var(--text2); font-weight: 500; margin-bottom: 28px; }
 
-.stats-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 28px;
-}
+.stats-row { display: flex; gap: 12px; margin-bottom: 28px; }
 
 .stat-box {
-  flex: 1;
-  background: #f8f8f8;
-  border-radius: var(--radius);
-  padding: 16px 10px;
+  flex: 1; background: var(--surface2); border-radius: 10px; padding: 16px 10px;
+  border: 1px solid var(--border);
 }
 
 .stat-box .sv {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  margin-bottom: 2px;
+  font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; margin-bottom: 2px;
 }
 
-.stat-box .sl { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-.stat-box.correct .sv { color: var(--green); }
-.stat-box.wrong .sv   { color: var(--red); }
-.stat-box.pct .sv     { color: var(--blue); }
+.stat-box .sl { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.stat-box.correct .sv { color: #16a34a; }
+.stat-box.wrong   .sv { color: #dc2626; }
+.stat-box.pct     .sv { color: var(--accent); }
 
 .results-actions { display: flex; gap: 10px; }
 
 .btn-again {
-  flex: 1;
-  background: #f0f0f0;
-  border: none;
-  border-radius: var(--radius);
-  padding: 13px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  color: var(--text);
-  transition: background 0.15s;
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 13px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; color: var(--text); transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
 }
 
-.btn-again:hover { background: #e5e5e5; }
+.btn-again:hover { background: var(--bg); }
 
-/* ── MISC ─────────────────────────────────────────────────── */
+/* ── TOAST ── */
 #toast {
-  position: fixed;
-  bottom: 20px; left: 50%;
+  position: fixed; bottom: 20px; left: 50%;
   transform: translateX(-50%) translateY(8px);
-  background: #1a1a1a;
-  color: #fff;
-  padding: 11px 22px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 700;
-  opacity: 0;
-  transition: all 0.25s;
-  pointer-events: none;
-  z-index: 9999;
-  white-space: nowrap;
+  background: var(--text); color: var(--surface);
+  padding: 10px 22px; border-radius: 99px; font-size: 13px;
+  font-weight: 600; opacity: 0; transition: all 0.25s;
+  pointer-events: none; z-index: 9999;
 }
 
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.loading { text-align:center; padding: 40px; color: var(--muted); font-weight: 600; font-size: 14px; }
+.loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
 
 @media (max-width: 600px) {
-  .mode-row { grid-template-columns: 1fr; }
-  .ans-tiles { grid-template-columns: 1fr; }
-  .study-tiles { grid-template-columns: 1fr; }
-  .ans-grid { grid-template-columns: 1fr; }
+  .mode-row, .ans-tiles, .study-tiles, .ans-grid { grid-template-columns: 1fr; }
   .dash-hero { flex-direction: column; gap: 16px; text-align: center; }
   .stats-row { flex-direction: column; }
+  .mem-grid { grid-template-columns: repeat(4, 60px); }
+  .mem-card { width: 60px; height: 60px; font-size: 22px; }
 }
 </style>
 </head>
@@ -996,10 +928,15 @@ body {
 <!-- AUTH -->
 <div id="auth-page" class="page">
   <div class="auth-card">
-    <div class="auth-logo">
+    <div class="auth-brand">
+      <div class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M3 6h16M3 11h10M3 16h14" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <h1>Learn Zone</h1>
-      <p>Quiz smarter, learn faster</p>
     </div>
+    <p class="auth-tagline">Quiz smarter, learn faster</p>
     <div class="tab-row">
       <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
       <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
@@ -1013,16 +950,29 @@ body {
       <label>Password</label>
       <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <button class="btn-purple" id="auth-btn" onclick="handleAuth()">Sign In</button>
+    <button class="btn-primary" id="auth-btn" onclick="handleAuth()">Sign In</button>
   </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard-page" class="page">
   <nav class="navbar">
-    <span class="nav-logo">Learn Zone</span>
+    <div class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M2 8h7M2 12h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Learn Zone
+    </div>
     <div class="nav-right">
       <span class="nav-chip" id="nav-uname">User</span>
+      <button class="btn-icon" onclick="openSettings()" title="Settings" aria-label="Settings">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="2.5"/>
+          <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.1 3.1l1.1 1.1M11.8 11.8l1.1 1.1M11.8 4.2l-1.1 1.1M4.3 11.8l-1.1 1.1"/>
+        </svg>
+      </button>
       <button class="btn-ghost" onclick="logout()">Sign Out</button>
     </div>
   </nav>
@@ -1032,30 +982,57 @@ body {
         <h2 id="dash-greeting">Welcome back!</h2>
         <p>Pick a mode and start quizzing</p>
       </div>
-      <span class="hero-emoji">🧠</span>
+      <div class="hero-illus">
+        <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+          <rect x="10" y="10" width="70" height="50" rx="8" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <path d="M22 30h46M22 40h30M22 50h36" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="68" cy="68" r="16" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+          <path d="M62 68l4 4 8-8" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
 
     <div class="section-head" style="margin-bottom:14px">
       <h3>Choose a Mode</h3>
     </div>
-    <div class="mode-row" style="margin-bottom:28px">
+    <div class="mode-row">
       <div class="mode-tile" onclick="showPage('sets-page','game')">
-        <span class="tile-icon">🎮</span>
+        <div class="tile-icon-wrap game">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="2" y="8" width="22" height="14" rx="5" fill="#5b4cf5" opacity="0.2"/>
+            <rect x="2" y="8" width="22" height="14" rx="5" stroke="#5b4cf5" stroke-width="1.8"/>
+            <path d="M8 12v4M6 14h4" stroke="#5b4cf5" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="17" cy="13" r="1.2" fill="#5b4cf5"/>
+            <circle cx="20" cy="15.5" r="1.2" fill="#5b4cf5"/>
+            <path d="M10 5l3-3 3 3" stroke="#5b4cf5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <h4>Game Mode</h4>
-        <p>Race the clock. Score points. Beat your streak.</p>
-        <span class="tag purple">Timed · Scored</span>
+        <p>Race the clock. Score big. Every 3 correct answers unlocks a mini-game bonus round.</p>
+        <span class="mode-tag purple">Timed · Scored · Bonus Games</span>
       </div>
       <div class="mode-tile" onclick="showPage('sets-page','study')">
-        <span class="tile-icon">📚</span>
+        <div class="tile-icon-wrap study">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="4" y="3" width="18" height="21" rx="3" fill="#d97706" opacity="0.2"/>
+            <rect x="4" y="3" width="18" height="21" rx="3" stroke="#d97706" stroke-width="1.8"/>
+            <path d="M8 9h10M8 13h10M8 17h6" stroke="#d97706" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
         <h4>Study Mode</h4>
-        <p>No timer. Get 3 right in a row to finish.</p>
-        <span class="tag amber">Relaxed · Streak</span>
+        <p>No pressure. Answer all questions and see your score — the faster you answer, the more points you earn.</p>
+        <span class="mode-tag amber">Self-Paced · Timed Score</span>
       </div>
     </div>
 
     <div class="section-head">
       <h3>My Sets</h3>
-      <button class="btn-outline-purple" onclick="showPage('set-builder-page')">+ New Set</button>
+      <button class="btn-outline" onclick="showPage('set-builder-page')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M6.5 1v11M1 6.5h11"/>
+        </svg>
+        New Set
+      </button>
     </div>
     <div id="dash-sets"><div class="loading">Loading…</div></div>
   </div>
@@ -1064,13 +1041,25 @@ body {
 <!-- SETS PICKER -->
 <div id="sets-page" class="page">
   <nav class="navbar">
-    <span class="nav-logo">Learn Zone</span>
+    <div class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M2 8h7M2 12h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Learn Zone
+    </div>
     <div class="nav-right">
       <span class="nav-chip" id="sets-nav-uname">User</span>
     </div>
   </nav>
   <div class="subbar">
-    <button class="btn-back" onclick="showPage('dashboard-page')">← Back</button>
+    <button class="btn-back" onclick="showPage('dashboard-page')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 2L4 7l5 5"/>
+      </svg>
+      Back
+    </button>
     <h2 id="sets-page-title">Pick a Set</h2>
   </div>
   <div id="sets-full-grid" class="sets-full-grid"></div>
@@ -1079,17 +1068,34 @@ body {
 <!-- BUILDER -->
 <div id="set-builder-page" class="page">
   <nav class="navbar">
-    <span class="nav-logo">Learn Zone</span>
+    <div class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M2 8h7M2 12h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Learn Zone
+    </div>
   </nav>
   <div class="subbar">
-    <button class="btn-back" onclick="showPage('dashboard-page')">← Back</button>
+    <button class="btn-back" onclick="showPage('dashboard-page')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 2L4 7l5 5"/>
+      </svg>
+      Back
+    </button>
     <h2>Create Set</h2>
   </div>
   <div class="builder-body">
     <input class="builder-input" id="set-title" placeholder="Set title (e.g. Biology Chapter 3)">
     <div id="q-list"></div>
-    <button class="btn-add-q" onclick="addQuestion()">+ Add Question</button>
-    <button class="btn-purple" onclick="saveSet()">Save Set</button>
+    <button class="btn-add-q" onclick="addQuestion()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M7 1v12M1 7h12"/>
+      </svg>
+      Add Question
+    </button>
+    <button class="btn-primary" onclick="saveSet()">Save Set</button>
   </div>
 </div>
 
@@ -1097,17 +1103,29 @@ body {
 <div id="game-page" class="page">
   <div class="game-top">
     <span class="game-top-title" id="game-title">Quiz</span>
-    <div style="display:flex;gap:10px;align-items:center">
-      <span class="game-stat-pill" id="game-score-pill">0 pts</span>
-      <span class="game-stat-pill" id="game-streak-pill">0🔥</span>
-      <button class="btn-ghost" onclick="quitGame()">✕ Quit</button>
+    <div class="game-pills">
+      <span class="game-pill" id="game-score-pill">0 pts</span>
+      <span class="game-pill" id="game-streak-pill">0 streak</span>
+      <button class="btn-quit" onclick="quitGame()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 1l10 10M11 1L1 11"/>
+        </svg>
+        Quit
+      </button>
     </div>
   </div>
   <div class="progress-wrap">
     <div class="progress-fill" id="game-prog" style="width:0%"></div>
   </div>
   <div class="game-center">
-    <div class="timer-circle" id="timer">20</div>
+    <div class="timer-ring" id="timer-ring">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="ring-bg" cx="36" cy="36" r="30" stroke-width="4"/>
+        <circle class="ring-fill" id="ring-fill" cx="36" cy="36" r="30" stroke-width="4"
+          stroke-dasharray="188.5" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-num" id="timer">20</div>
+    </div>
     <div class="q-bubble">
       <div class="q-text" id="q-text">Loading…</div>
     </div>
@@ -1116,36 +1134,52 @@ body {
   </div>
 </div>
 
+<!-- MINI-GAME OVERLAY -->
+<div class="minigame-overlay" id="minigame-overlay">
+  <div class="mg-header">Bonus Round</div>
+  <div class="mg-title" id="mg-title">Tap Frenzy</div>
+  <div class="mg-timer-bar-wrap">
+    <div class="mg-timer-bar" id="mg-timer-bar" style="width:100%"></div>
+  </div>
+  <div id="mg-content"></div>
+  <div style="text-align:center">
+    <div class="mg-score" id="mg-score-disp">0</div>
+    <div class="mg-pts-label">bonus points</div>
+  </div>
+</div>
+
 <!-- STUDY -->
 <div id="study-page" class="page">
   <div class="study-top">
     <span class="study-top-title" id="study-title">Study</span>
-    <div style="display:flex;gap:10px;align-items:center">
-      <span class="study-stat-pill" id="study-streak-pill">0🔥</span>
-      <button style="background:rgba(0,0,0,0.1);border:none;border-radius:6px;padding:6px 14px;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;cursor:pointer;" onclick="showPage('dashboard-page')">✕ Quit</button>
+    <div class="study-pills">
+      <span class="study-pill" id="study-q-pill">Q 1</span>
+      <span class="study-pill" id="study-pts-pill">0 pts</span>
+      <button style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;color:#fff;display:flex;align-items:center;gap:5px;" onclick="showPage('dashboard-page')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l9 9M10 1L1 10"/></svg>
+        Quit
+      </button>
     </div>
   </div>
+  <div class="study-progress-wrap">
+    <div class="study-progress-fill" id="study-prog" style="width:0%"></div>
+  </div>
   <div class="study-center">
-    <div class="streak-banner" id="streak-banner" style="display:none">🔥 Streak!</div>
+    <div class="study-timer" id="study-timer">0.0s</div>
     <div class="study-q-card" id="study-q-card">
       <div class="study-q-label" id="study-q-label">Question 1</div>
       <div class="study-q-text" id="study-q-text">Loading…</div>
     </div>
     <div class="study-tiles" id="study-tiles"></div>
-    <div class="feedback-strip" id="study-fb" style="display:none;width:100%;max-width:680px;"></div>
-    <div class="study-done" id="study-done">
-      <h3>🎉 Complete!</h3>
-      <p>You got 3 correct in a row. Nicely done!</p>
-      <button class="btn-purple" onclick="showPage('dashboard-page')">Back to Dashboard</button>
-    </div>
+    <div class="study-fb" id="study-fb"></div>
   </div>
 </div>
 
 <!-- RESULTS -->
 <div id="results-page" class="page">
   <div class="results-card">
-    <div class="results-trophy" id="r-trophy">🏆</div>
-    <h2 id="r-title">Quiz Complete!</h2>
+    <div class="results-icon" id="r-icon"></div>
+    <h2 id="r-title">Complete!</h2>
     <div class="results-score" id="r-score">0</div>
     <div class="results-pts">points</div>
     <div class="stats-row">
@@ -1154,8 +1188,80 @@ body {
       <div class="stat-box pct"><div class="sv" id="r-pct">0%</div><div class="sl">Accuracy</div></div>
     </div>
     <div class="results-actions">
-      <button class="btn-again" onclick="playAgain()">🔄 Play Again</button>
-      <button class="btn-purple" style="flex:1;margin-top:0" onclick="showPage('dashboard-page')">🏠 Home</button>
+      <button class="btn-again" onclick="playAgain()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 1v4h4M13 13V9H9"/><path d="M1.5 9A6 6 0 1 0 3 3.5L1 5"/>
+        </svg>
+        Play Again
+      </button>
+      <button class="btn-primary" style="flex:1;margin-top:0;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="showPage('dashboard-page')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 7l6-6 6 6M2 7v6h4V9h4v4h4V7"/>
+        </svg>
+        Home
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div class="settings-overlay" id="settings-overlay" onclick="closeSettings(event)">
+  <div class="settings-panel" onclick="event.stopPropagation()">
+    <div class="settings-header">
+      <h3>Settings</h3>
+      <button class="btn-icon" onclick="closeSettings()" aria-label="Close settings">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M1 1l11 11M12 1L1 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row">
+        <div class="setting-label">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 1v9.5M7 1L4 3.5M7 1l3 2.5M1 10.5h11"/>
+            <path d="M3 7c0 1.1.9 2 2 2h4a2 2 0 0 0 0-4H5a2 2 0 0 1 0-4h4"/>
+          </svg>
+          Music Volume
+        </div>
+        <div class="setting-control">
+          <input type="range" min="0" max="100" value="40" id="music-vol-slider" oninput="setMusicVol(this.value)">
+          <span class="setting-val" id="music-vol-val">40%</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 5v3h3l4 4V1L4 5H1zM9.5 3.5c1 1 1 3.5 0 5.5M11.5 1.5c2 2 2 7.5 0 10"/>
+          </svg>
+          SFX Volume
+        </div>
+        <div class="setting-control">
+          <input type="range" min="0" max="100" value="70" id="sfx-vol-slider" oninput="setSfxVol(this.value)">
+          <span class="setting-val" id="sfx-vol-val">70%</span>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6.5" cy="6.5" r="3"/>
+            <path d="M6.5 1v1M6.5 11v1M1 6.5h1M11 6.5h1M2.9 2.9l.7.7M9.4 9.4l.7.7M2.9 10.1l.7-.7M9.4 3.6l.7-.7"/>
+          </svg>
+          Appearance
+        </div>
+        <div class="theme-toggle">
+          <button class="theme-opt active" id="theme-light" onclick="setTheme('light')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="6" r="2.5"/><path d="M6 1v1M6 10v1M1 6h1M10 6h1M2.6 2.6l.7.7M8.7 8.7l.7.7M2.6 9.4l.7-.7M8.7 3.3l.7-.7"/></svg>
+            Light
+          </button>
+          <button class="theme-opt" id="theme-dark" onclick="setTheme('dark')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7.4A5 5 0 1 1 4.6 2 4 4 0 0 0 10 7.4z"/></svg>
+            Dark
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1178,259 +1284,303 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 
-// ── State ──────────────────────────────────────────────────
+// ── State ──
 let currentUser = null, currentMode = 'game', currentSet = null;
 let qIdx = 0, score = 0, streak = 0, correct = 0, wrong = 0;
-let timer = null, timeLeft = 0, answered = false;
-let studyStreak = 0, studyCorrect = 0, studyPool = [], studyIdx = 0;
+let gameTimer = null, timeLeft = 0, answered = false;
+let studyPool = [], studyIdx = 0, studyScore = 0, studyCorrect = 0, studyWrong = 0;
+let studyQTimer = null, studyQTime = 0;
 let lastSetJson = null;
+let consecutiveCorrect = 0;
 
-const SHAPES = ['▲','●','■','✦'];
+let musicVol = 0.4, sfxVol = 0.7;
+let audioCtx = null;
 
-// ── Helpers ────────────────────────────────────────────────
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
-
-// Hash password using SHA-256 via Web Crypto API
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+// ── Audio ──
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
 }
 
-window.showToast = function(msg, d=2400){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+function playTone(freq, type, duration, vol) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol * sfxVol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(); osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function sfxCorrect() { playTone(880, 'sine', 0.15, 0.3); setTimeout(()=>playTone(1100,'sine',0.15,0.2), 100); }
+function sfxWrong()   { playTone(200, 'square', 0.2, 0.25); }
+function sfxClick()   { playTone(600, 'sine', 0.07, 0.15); }
+function sfxBonus()   {
+  [440,550,660,880].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.18,0.25), i*70));
+}
+
+// Music (simple ambient loop)
+let musicNode = null, musicGain = null;
+function startMusic() {
+  try {
+    const ctx = getAudioCtx();
+    if (musicGain) { musicGain.gain.value = musicVol; return; }
+    musicGain = ctx.createGain();
+    musicGain.gain.value = musicVol;
+    musicGain.connect(ctx.destination);
+    function scheduleNote(freq, t, dur) {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(musicGain);
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.08, t + 0.05);
+      g.gain.linearRampToValueAtTime(0, t + dur);
+      o.start(t); o.stop(t + dur + 0.05);
+    }
+    const notes = [261,294,330,349,392,440,494,523];
+    let t = ctx.currentTime + 0.1;
+    function loop() {
+      const n = notes[Math.floor(Math.random()*notes.length)];
+      scheduleNote(n, t, 1.2);
+      t += 1.8 + Math.random();
+      musicNode = setTimeout(loop, 1200);
+    }
+    loop();
+  } catch(e) {}
+}
+
+function stopMusic() {
+  if (musicNode) clearTimeout(musicNode);
+  musicNode = null;
+  if (musicGain) { musicGain.gain.value = 0; }
+}
+
+// ── Settings ──
+window.openSettings = function() {
+  document.getElementById('settings-overlay').classList.add('open');
+};
+
+window.closeSettings = function(e) {
+  if (!e || e.target === document.getElementById('settings-overlay'))
+    document.getElementById('settings-overlay').classList.remove('open');
+};
+
+window.setMusicVol = function(v) {
+  musicVol = v / 100;
+  document.getElementById('music-vol-val').textContent = v + '%';
+  if (musicGain) musicGain.gain.value = musicVol;
+  localStorage.setItem('lz_music_vol', v);
+};
+
+window.setSfxVol = function(v) {
+  sfxVol = v / 100;
+  document.getElementById('sfx-vol-val').textContent = v + '%';
+  localStorage.setItem('lz_sfx_vol', v);
+};
+
+window.setTheme = function(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-light').classList.toggle('active', t === 'light');
+  document.getElementById('theme-dark').classList.toggle('active', t === 'dark');
+  localStorage.setItem('lz_theme', t);
+};
+
+function loadSettings() {
+  const mv = localStorage.getItem('lz_music_vol');
+  const sv = localStorage.getItem('lz_sfx_vol');
+  const th = localStorage.getItem('lz_theme');
+  if (mv) { document.getElementById('music-vol-slider').value = mv; document.getElementById('music-vol-val').textContent = mv + '%'; musicVol = mv/100; }
+  if (sv) { document.getElementById('sfx-vol-slider').value = sv; document.getElementById('sfx-vol-val').textContent = sv + '%'; sfxVol = sv/100; }
+  if (th) setTheme(th);
+}
+
+// ── Helpers ──
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b; }
+
+async function hashPassword(password) {
+  const data = new TextEncoder().encode(password);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+window.showToast = function(msg, d=2400) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), d);
 };
 
-window.showPage = function(pid, mode){
-  if(mode) currentMode = mode;
+window.showPage = function(pid, mode) {
+  if (mode) currentMode = mode;
   document.querySelectorAll('.page').forEach(p=>{ p.style.display='none'; p.classList.remove('active'); });
   const pg = document.getElementById(pid);
-  pg.style.display = 'flex';
-  pg.classList.add('active');
-  if(pid==='dashboard-page') loadDash();
-  if(pid==='sets-page') loadSetsPage();
+  pg.style.display = 'flex'; pg.classList.add('active');
+  if (pid === 'dashboard-page') loadDash();
+  if (pid === 'sets-page') loadSetsPage();
+  if (pid === 'game-page') startMusic();
+  else stopMusic();
 };
 
-// ── Session persistence ────────────────────────────────────
-function saveSession(username, uid) {
-  localStorage.setItem('lz_user', JSON.stringify({ username, uid }));
-}
-
-function loadSession() {
-  try {
-    const s = localStorage.getItem('lz_user');
-    return s ? JSON.parse(s) : null;
-  } catch { return null; }
-}
-
-function clearSession() {
-  localStorage.removeItem('lz_user');
-}
+// ── Session ──
+function saveSession(username, uid) { localStorage.setItem('lz_user', JSON.stringify({username,uid})); }
+function loadSession() { try { const s=localStorage.getItem('lz_user'); return s?JSON.parse(s):null; } catch{return null;} }
+function clearSession() { localStorage.removeItem('lz_user'); }
 
 function setLoggedIn(username, uid) {
-  currentUser = { username, uid };
+  currentUser = {username, uid};
   document.getElementById('nav-uname').textContent = username;
   document.getElementById('sets-nav-uname').textContent = username;
-  document.getElementById('dash-greeting').textContent = `Hey, ${username}! 👋`;
+  document.getElementById('dash-greeting').textContent = `Hey, ${username}!`;
   saveSession(username, uid);
   showPage('dashboard-page');
 }
 
-// ── Auth tab ───────────────────────────────────────────────
+// ── Auth ──
 let tabMode = 'login';
 
-window.switchTab = function(tab){
+window.switchTab = function(tab) {
   tabMode = tab;
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(tab==='login'&&i===0)||(tab==='signup'&&i===1)));
-  document.getElementById('auth-btn').textContent = tab==='login' ? 'Sign In' : 'Create Account';
-  document.getElementById('auth-err').style.display = 'none';
+  document.getElementById('auth-btn').textContent = tab==='login'?'Sign In':'Create Account';
+  document.getElementById('auth-err').style.display='none';
 };
 
-window.handleAuth = async function(){
+window.handleAuth = async function() {
+  sfxClick();
   const username = document.getElementById('auth-user').value.trim().toLowerCase();
   const password = document.getElementById('auth-pass').value;
   const err = document.getElementById('auth-err');
   const btn = document.getElementById('auth-btn');
-
   err.style.display = 'none';
-
-  if(!username || !password) {
-    err.textContent = 'Fill in all fields.';
-    err.style.display = 'block';
-    return;
-  }
-  if(password.length < 6) {
-    err.textContent = 'Password must be at least 6 characters.';
-    err.style.display = 'block';
-    return;
-  }
-  if(!/^[a-zA-Z0-9_]+$/.test(username)) {
-    err.textContent = 'Username: letters, numbers, underscores only.';
-    err.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Please wait…';
-
+  if (!username||!password){err.textContent='Fill in all fields.';err.style.display='block';return;}
+  if (password.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
+  if (!/^[a-zA-Z0-9_]+$/.test(username)){err.textContent='Username: letters, numbers, underscores only.';err.style.display='block';return;}
+  btn.disabled=true; btn.textContent='Please wait…';
   try {
     const passwordHash = await hashPassword(password);
-    const userDocRef = doc(db, 'users', username);
+    const userDocRef = doc(db,'users',username);
     const userSnap = await getDoc(userDocRef);
-
-    if(tabMode === 'signup') {
-      if(userSnap.exists()) {
-        err.textContent = 'Username already taken. Choose another.';
-        err.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Create Account';
-        return;
-      }
-      // Create new user
-      await setDoc(userDocRef, {
-        username,
-        passwordHash,
-        createdAt: serverTimestamp()
-      });
-      setLoggedIn(username, username);
-      showToast('Account created! Welcome 🎉');
-
+    if (tabMode==='signup'){
+      if(userSnap.exists()){err.textContent='Username already taken.';err.style.display='block';btn.disabled=false;btn.textContent='Create Account';return;}
+      await setDoc(userDocRef,{username,passwordHash,createdAt:serverTimestamp()});
+      setLoggedIn(username,username); showToast('Account created! Welcome.');
     } else {
-      // Sign in
-      if(!userSnap.exists()) {
-        err.textContent = 'Username not found.';
-        err.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Sign In';
-        return;
-      }
-      const userData = userSnap.data();
-      if(userData.passwordHash !== passwordHash) {
-        err.textContent = 'Incorrect password.';
-        err.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Sign In';
-        return;
-      }
-      setLoggedIn(username, username);
+      if(!userSnap.exists()){err.textContent='Username not found.';err.style.display='block';btn.disabled=false;btn.textContent='Sign In';return;}
+      if(userSnap.data().passwordHash!==passwordHash){err.textContent='Incorrect password.';err.style.display='block';btn.disabled=false;btn.textContent='Sign In';return;}
+      setLoggedIn(username,username);
     }
-
   } catch(e) {
-    console.error('Auth error:', e);
-    // Show the real error so we can diagnose it
-    err.textContent = `Error: ${e.code || e.message || String(e)}`;
-    err.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = tabMode === 'login' ? 'Sign In' : 'Create Account';
+    err.textContent=`Error: ${e.code||e.message||String(e)}`;
+    err.style.display='block'; btn.disabled=false;
+    btn.textContent=tabMode==='login'?'Sign In':'Create Account';
   }
 };
 
-window.logout = function(){
-  currentUser = null;
-  clearSession();
-  document.querySelectorAll('.page').forEach(p=>{ p.style.display='none'; p.classList.remove('active'); });
-  const ap = document.getElementById('auth-page');
-  ap.style.display = 'flex';
-  ap.classList.add('active');
-  document.getElementById('auth-btn').textContent = 'Sign In';
-  document.getElementById('auth-btn').disabled = false;
-  document.getElementById('auth-err').style.display = 'none';
-  document.getElementById('auth-user').value = '';
-  document.getElementById('auth-pass').value = '';
+window.logout = function() {
+  currentUser=null; clearSession();
+  document.querySelectorAll('.page').forEach(p=>{p.style.display='none';p.classList.remove('active');});
+  const ap=document.getElementById('auth-page'); ap.style.display='flex'; ap.classList.add('active');
+  document.getElementById('auth-btn').textContent='Sign In';
+  document.getElementById('auth-btn').disabled=false;
+  document.getElementById('auth-err').style.display='none';
+  document.getElementById('auth-user').value='';
+  document.getElementById('auth-pass').value='';
 };
 
-// ── Firestore sets ─────────────────────────────────────────
-async function getSets(){
-  if(!currentUser) return [];
-  const snap = await getDocs(query(collection(db,'sets'), where('uid','==', currentUser.uid)));
+// ── Firestore ──
+async function getSets() {
+  if (!currentUser) return [];
+  const snap = await getDocs(query(collection(db,'sets'),where('uid','==',currentUser.uid)));
   return snap.docs.map(d=>({id:d.id,...d.data()}));
 }
 
-async function loadDash(){
+async function loadDash() {
   const el = document.getElementById('dash-sets');
   el.innerHTML='<div class="loading">Loading…</div>';
-  try{
+  try {
     const sets = await getSets();
-    if(!sets.length){
-      el.innerHTML=`<div class="empty-state"><div class="e-icon">📭</div><h4>No sets yet</h4><p>Create your first set to get started.</p></div>`;
+    if (!sets.length){
+      el.innerHTML=`<div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <rect x="8" y="6" width="32" height="38" rx="4" stroke="currentColor" stroke-width="1.8" opacity="0.3"/>
+          <path d="M16 16h16M16 22h10M16 28h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+        <h4>No sets yet</h4><p>Create your first set to get started.</p></div>`;
       return;
     }
     const grid = document.createElement('div');
-    grid.className = 'sets-mini';
+    grid.className='sets-mini';
     sets.slice(0,6).forEach(s=>{
-      const c = document.createElement('div');
-      c.className = 'set-mini-card';
-      c.innerHTML = `<h4>${esc(s.title)}</h4><p>${(s.questions||[]).length} question${(s.questions||[]).length!==1?'s':''}</p>`;
+      const c=document.createElement('div');
+      c.className='set-mini-card';
+      c.innerHTML=`<h4>${esc(s.title)}</h4><p>${(s.questions||[]).length} question${(s.questions||[]).length!==1?'s':''}</p>`;
       grid.appendChild(c);
     });
-    el.innerHTML = '';
-    el.appendChild(grid);
-  } catch(e) {
-    console.error(e);
-    el.innerHTML = '<div class="loading" style="color:#b91c1c">Failed to load.</div>';
-  }
+    el.innerHTML=''; el.appendChild(grid);
+  } catch(e){ el.innerHTML='<div class="loading" style="color:#b91c1c">Failed to load.</div>'; }
 }
 
-async function loadSetsPage(){
-  const mode = currentMode;
-  document.getElementById('sets-page-title').textContent = mode==='game' ? '🎮 Game Mode — Pick a Set' : '📚 Study Mode — Pick a Set';
-  const grid = document.getElementById('sets-full-grid');
-  grid.innerHTML = '<div class="loading">Loading…</div>';
-  try{
-    const sets = await getSets();
-    grid.innerHTML = '';
-    if(!sets.length){
-      grid.innerHTML = `<div style="padding:28px"><div class="empty-state"><div class="e-icon">📭</div><h4>No sets</h4><p>Create one from the dashboard.</p></div></div>`;
+async function loadSetsPage() {
+  const mode=currentMode;
+  document.getElementById('sets-page-title').textContent=mode==='game'?'Game Mode — Pick a Set':'Study Mode — Pick a Set';
+  const grid=document.getElementById('sets-full-grid');
+  grid.innerHTML='<div class="loading">Loading…</div>';
+  try {
+    const sets=await getSets();
+    grid.innerHTML='';
+    if (!sets.length){
+      grid.innerHTML=`<div style="padding:28px"><div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <rect x="8" y="6" width="32" height="38" rx="4" stroke="currentColor" stroke-width="1.8" opacity="0.3"/>
+          <path d="M16 16h16M16 22h10M16 28h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+        <h4>No sets</h4><p>Create one from the dashboard.</p></div></div>`;
       return;
     }
     sets.forEach(s=>{
-      const c = document.createElement('div');
-      c.className = 'set-full-card';
-      const qc = (s.questions||[]).length;
-      c.innerHTML = `
-        <h3>${esc(s.title)}</h3>
+      const c=document.createElement('div'); c.className='set-full-card';
+      const qc=(s.questions||[]).length;
+      c.innerHTML=`<h3>${esc(s.title)}</h3>
         <div class="q-count">${qc} question${qc!==1?'s':''}</div>
         <div class="card-actions">
-          <button class="btn-card game" onclick='startGame(${JSON.stringify(JSON.stringify(s))})'>🎮 Game</button>
-          <button class="btn-card study" onclick='startStudy(${JSON.stringify(JSON.stringify(s))})'>📚 Study</button>
-          <button class="btn-card del" onclick="deleteSet('${s.id}',this)">🗑</button>
+          <button class="btn-card game" onclick='startGame(${JSON.stringify(JSON.stringify(s))})'>Game</button>
+          <button class="btn-card study" onclick='startStudy(${JSON.stringify(JSON.stringify(s))})'>Study</button>
+          <button class="btn-card del" onclick="deleteSet('${s.id}',this)">Delete</button>
         </div>`;
       grid.appendChild(c);
     });
-  } catch(e) {
-    console.error(e);
-    grid.innerHTML = '<div class="loading" style="color:#b91c1c">Failed to load.</div>';
-  }
+  } catch(e){ grid.innerHTML='<div class="loading" style="color:#b91c1c">Failed to load.</div>'; }
 }
 
-window.deleteSet = async function(id, btn){
-  if(!confirm('Delete this set?')) return;
-  try{
+window.deleteSet = async function(id, btn) {
+  if (!confirm('Delete this set?')) return;
+  try {
     await deleteDoc(doc(db,'sets',id));
     btn.closest('.set-full-card').remove();
-    showToast('Deleted.');
-    loadDash();
+    showToast('Deleted.'); loadDash();
   } catch{ showToast('Failed to delete.'); }
 };
 
-// ── Builder ────────────────────────────────────────────────
-let qCount = 0;
-const DOTS = ['a','b','c','d'];
+// ── Builder ──
+let qCount=0;
+const DOTS=['a','b','c','d'];
 
-window.addQuestion = function(){
+window.addQuestion = function() {
+  sfxClick();
   qCount++;
-  const id = qCount;
-  const list = document.getElementById('q-list');
-  const div = document.createElement('div');
-  div.className='q-card';
-  div.dataset.qid = id;
+  const id=qCount;
+  const list=document.getElementById('q-list');
+  const div=document.createElement('div');
+  div.className='q-card'; div.dataset.qid=id;
   div.innerHTML=`
-    <button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+    <button class="btn-del-q" onclick="this.closest('.q-card').remove()" aria-label="Delete question">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l8 8M9 1L1 9"/></svg>
+    </button>
     <div class="q-card-num">Question ${id}</div>
     <input class="q-input" name="q-${id}" placeholder="Type your question…">
     <div class="ans-grid">
@@ -1444,241 +1594,403 @@ window.addQuestion = function(){
   list.appendChild(div);
 };
 
-window.markRow = function(id){
+window.markRow = function(id) {
   [0,1,2,3].forEach(i=>{
-    const row = document.getElementById(`arow-${id}-${i}`);
-    const r = row.querySelector('input[type=radio]');
-    row.classList.toggle('is-correct', r && r.checked);
+    const row=document.getElementById(`arow-${id}-${i}`);
+    const r=row.querySelector('input[type=radio]');
+    row.classList.toggle('is-correct',r&&r.checked);
   });
 };
 
-window.saveSet = async function(){
-  const title = document.getElementById('set-title').value.trim();
-  if(!title){ showToast('Add a title!'); return; }
-  const cards = document.querySelectorAll('.q-card');
-  if(!cards.length){ showToast('Add at least one question!'); return; }
-  const questions = [];
-  let valid = true;
+window.saveSet = async function() {
+  sfxClick();
+  const title=document.getElementById('set-title').value.trim();
+  if (!title){showToast('Add a title!');return;}
+  const cards=document.querySelectorAll('.q-card');
+  if (!cards.length){showToast('Add at least one question!');return;}
+  const questions=[]; let valid=true;
   cards.forEach(c=>{
-    const qid = c.dataset.qid;
-    const qt = c.querySelector(`input[name="q-${qid}"]`).value.trim();
-    const ans = [0,1,2,3].map(i=>c.querySelector(`input[name="a-${qid}-${i}"]`).value.trim());
-    const cor = c.querySelector(`input[name="cor-${qid}"]:checked`);
-    if(!qt || ans.some(a=>!a) || !cor){ valid=false; return; }
-    questions.push({ question:qt, answers:ans, correct:parseInt(cor.value) });
+    const qid=c.dataset.qid;
+    const qt=c.querySelector(`input[name="q-${qid}"]`).value.trim();
+    const ans=[0,1,2,3].map(i=>c.querySelector(`input[name="a-${qid}-${i}"]`).value.trim());
+    const cor=c.querySelector(`input[name="cor-${qid}"]:checked`);
+    if (!qt||ans.some(a=>!a)||!cor){valid=false;return;}
+    questions.push({question:qt,answers:ans,correct:parseInt(cor.value)});
   });
-  if(!valid){ showToast('Fill in all fields and mark a correct answer for each.'); return; }
-  try{
-    await addDoc(collection(db,'sets'),{
-      uid: currentUser.uid,
-      title,
-      questions,
-      createdAt: serverTimestamp()
-    });
-    showToast('Set saved! 🎉');
-    document.getElementById('set-title').value = '';
-    document.getElementById('q-list').innerHTML = '';
-    qCount = 0;
+  if (!valid){showToast('Fill all fields and mark a correct answer for each.');return;}
+  try {
+    await addDoc(collection(db,'sets'),{uid:currentUser.uid,title,questions,createdAt:serverTimestamp()});
+    showToast('Set saved!');
+    document.getElementById('set-title').value='';
+    document.getElementById('q-list').innerHTML=''; qCount=0;
     showPage('dashboard-page');
-  } catch(e) {
-    console.error(e);
-    showToast('Failed to save. Try again.');
-  }
+  } catch(e){ showToast('Failed to save. Try again.'); }
 };
 
-// ── Game ───────────────────────────────────────────────────
-window.startGame = function(sj){
-  currentSet = JSON.parse(sj);
-  if(!currentSet.questions?.length){ showToast('No questions in this set!'); return; }
-  lastSetJson = sj;
-  qIdx=0; score=0; streak=0; correct=0; wrong=0; answered=false;
-  document.getElementById('game-title').textContent = currentSet.title;
-  showPage('game-page');
-  renderQ();
+// ── GAME MODE ──
+const SHAPES_SVG = [
+  `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polygon points="7,1 13,13 1,13" fill="rgba(255,255,255,0.7)"/></svg>`,
+  `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="rgba(255,255,255,0.7)"/></svg>`,
+  `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" fill="rgba(255,255,255,0.7)"/></svg>`,
+  `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polygon points="7,1 13,7 7,13 1,7" fill="rgba(255,255,255,0.7)"/></svg>`
+];
+
+window.startGame = function(sj) {
+  currentSet=JSON.parse(sj);
+  if (!currentSet.questions?.length){showToast('No questions in this set!');return;}
+  lastSetJson=sj; qIdx=0; score=0; streak=0; correct=0; wrong=0;
+  answered=false; consecutiveCorrect=0;
+  document.getElementById('game-title').textContent=currentSet.title;
+  showPage('game-page'); renderQ();
 };
 
-function renderQ(){
-  const qs = currentSet.questions;
-  if(qIdx >= qs.length){ endGame(); return; }
-  const q = qs[qIdx];
-  answered = false;
-  document.getElementById('q-text').textContent = q.question;
-  document.getElementById('game-prog').style.width = `${(qIdx/qs.length)*100}%`;
-  document.getElementById('game-fb').style.display = 'none';
-  document.getElementById('game-score-pill').textContent = `${score} pts`;
-  document.getElementById('game-streak-pill').textContent = `${streak}🔥`;
-
-  const cont = document.getElementById('ans-tiles');
-  cont.innerHTML = '';
+function renderQ() {
+  const qs=currentSet.questions;
+  if (qIdx>=qs.length){endGame();return;}
+  const q=qs[qIdx];
+  answered=false;
+  document.getElementById('q-text').textContent=q.question;
+  document.getElementById('game-prog').style.width=`${(qIdx/qs.length)*100}%`;
+  document.getElementById('game-fb').style.display='none';
+  document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
+  document.getElementById('game-streak-pill').textContent=`${streak} streak`;
+  const cont=document.getElementById('ans-tiles');
+  cont.innerHTML='';
   q.answers.forEach((ans,i)=>{
-    const b = document.createElement('button');
-    b.className = 'tile-btn';
-    b.dataset.i = i;
-    b.innerHTML = `<span class="t-shape">${SHAPES[i]}</span>${esc(ans)}`;
-    b.onclick = ()=>pick(i, q.correct);
+    const b=document.createElement('button');
+    b.className='tile-btn'; b.dataset.i=i;
+    b.innerHTML=`<span class="tile-shape">${SHAPES_SVG[i]}</span>${esc(ans)}`;
+    b.onclick=()=>pick(i,q.correct);
     cont.appendChild(b);
   });
   startTimer();
 }
 
-function startTimer(){
-  clearInterval(timer);
-  timeLeft = 20;
-  updTimer();
-  timer = setInterval(()=>{
-    timeLeft--;
-    updTimer();
-    if(timeLeft <= 0){ clearInterval(timer); if(!answered) timeUp(); }
-  }, 1000);
+function startTimer() {
+  clearInterval(gameTimer); timeLeft=20; updTimer();
+  gameTimer=setInterval(()=>{
+    timeLeft--; updTimer();
+    if (timeLeft<=0){clearInterval(gameTimer);if(!answered)timeUp();}
+  },1000);
 }
 
-function updTimer(){
-  const el = document.getElementById('timer');
-  el.textContent = timeLeft;
-  el.classList.toggle('warn', timeLeft<=5);
+function updTimer() {
+  document.getElementById('timer').textContent=timeLeft;
+  const fill=document.getElementById('ring-fill');
+  const circ=188.5;
+  fill.style.strokeDashoffset=circ*(1-timeLeft/20);
+  fill.classList.toggle('warn',timeLeft<=5);
 }
 
-function pick(idx, cor){
-  if(answered) return;
-  answered = true;
-  clearInterval(timer);
-  const btns = document.querySelectorAll('.tile-btn');
+function pick(idx, cor) {
+  if (answered) return;
+  answered=true; clearInterval(gameTimer);
+  const btns=document.querySelectorAll('.tile-btn');
   btns.forEach(b=>b.disabled=true);
-  const ok = idx===cor;
+  const ok=idx===cor;
   btns.forEach((b,i)=>{
     if(i===cor) b.classList.add('correct');
-    else if(i===idx && !ok) b.classList.add('wrong');
+    else if(i===idx&&!ok) b.classList.add('wrong');
     else b.classList.add('dim');
   });
-  const fb = document.getElementById('game-fb');
-  fb.style.display = 'block';
-  if(ok){
-    streak++; correct++;
-    const pts = Math.max(100, timeLeft*50) * (streak>=3 ? 2 : 1);
-    score += pts;
-    fb.className = 'feedback-strip ok';
-    fb.textContent = streak>=3 ? `🔥 Correct! +${pts} pts (${streak}x streak!)` : `✓ Correct! +${pts} pts`;
+  const fb=document.getElementById('game-fb');
+  fb.style.display='block';
+  if (ok){
+    sfxCorrect();
+    streak++; correct++; consecutiveCorrect++;
+    const pts=Math.max(100,timeLeft*50)*(streak>=3?2:1);
+    score+=pts;
+    fb.className='feedback-strip ok';
+    fb.textContent=streak>=3?`Correct! +${pts} pts (${streak}x streak!)`:`Correct! +${pts} pts`;
+    // Every 3 correct → trigger mini-game
+    if (consecutiveCorrect>=3){
+      consecutiveCorrect=0;
+      setTimeout(()=>{clearInterval(gameTimer);launchMiniGame();},1200);
+      return;
+    }
   } else {
-    streak = 0; wrong++;
-    fb.className = 'feedback-strip bad';
-    fb.textContent = `✗ Wrong — Answer: ${currentSet.questions[qIdx].answers[cor]}`;
+    sfxWrong();
+    streak=0; wrong++; consecutiveCorrect=0;
+    fb.className='feedback-strip bad';
+    fb.textContent=`Wrong — Answer: ${currentSet.questions[qIdx].answers[cor]}`;
   }
-  document.getElementById('game-score-pill').textContent = `${score} pts`;
-  document.getElementById('game-streak-pill').textContent = `${streak}🔥`;
-  setTimeout(()=>{ qIdx++; renderQ(); }, 1800);
+  document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
+  document.getElementById('game-streak-pill').textContent=`${streak} streak`;
+  setTimeout(()=>{qIdx++;renderQ();},1600);
 }
 
-function timeUp(){
-  answered = true;
-  const q = currentSet.questions[qIdx];
-  const btns = document.querySelectorAll('.tile-btn');
-  btns.forEach((b,i)=>{ b.disabled=true; if(i===q.correct) b.classList.add('correct'); else b.classList.add('dim'); });
-  streak = 0; wrong++;
-  const fb = document.getElementById('game-fb');
-  fb.style.display = 'block';
-  fb.className = 'feedback-strip bad';
-  fb.textContent = `⏰ Time's up — Answer: ${q.answers[q.correct]}`;
-  setTimeout(()=>{ qIdx++; renderQ(); }, 1800);
+function timeUp() {
+  answered=true; sfxWrong();
+  const q=currentSet.questions[qIdx];
+  const btns=document.querySelectorAll('.tile-btn');
+  btns.forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');else b.classList.add('dim');});
+  streak=0; wrong++; consecutiveCorrect=0;
+  const fb=document.getElementById('game-fb');
+  fb.style.display='block'; fb.className='feedback-strip bad';
+  fb.textContent=`Time's up — Answer: ${q.answers[q.correct]}`;
+  setTimeout(()=>{qIdx++;renderQ();},1600);
 }
 
-function endGame(){
-  clearInterval(timer);
-  const total = correct+wrong, pct = total ? Math.round((correct/total)*100) : 0;
-  document.getElementById('r-trophy').textContent = pct>=80?'🏆':pct>=50?'🎯':'📚';
-  document.getElementById('r-title').textContent = pct>=80?'Amazing!':pct>=50?'Good job!':'Keep going!';
-  document.getElementById('r-score').textContent = score.toLocaleString();
-  document.getElementById('r-correct').textContent = correct;
-  document.getElementById('r-wrong').textContent = wrong;
-  document.getElementById('r-pct').textContent = pct+'%';
-  showPage('results-page');
+function endGame() {
+  clearInterval(gameTimer);
+  const total=correct+wrong, pct=total?Math.round((correct/total)*100):0;
+  document.getElementById('r-icon').innerHTML=
+    pct>=80?`<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M18 8h28v22a14 14 0 0 1-28 0V8z" fill="#fbbf24" opacity="0.2" stroke="#fbbf24" stroke-width="1.8"/><path d="M8 8h10M46 8h10M14 24c0 5 2 8 4 10M50 24c0 5-2 8-4 10" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/><path d="M24 36l4 4 12-12" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    :pct>=50?`<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="24" stroke="#5b4cf5" stroke-width="1.8" opacity="0.3"/><path d="M22 32l6 6 14-14" stroke="#5b4cf5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    :`<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="8" width="48" height="38" rx="5" stroke="currentColor" stroke-width="1.8" opacity="0.3"/><path d="M16 20h32M16 28h20M16 36h24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.4"/></svg>`;
+  document.getElementById('r-title').textContent=pct>=80?'Excellent!':pct>=50?'Good job!':'Keep going!';
+  document.getElementById('r-score').textContent=score.toLocaleString();
+  document.getElementById('r-correct').textContent=correct;
+  document.getElementById('r-wrong').textContent=wrong;
+  document.getElementById('r-pct').textContent=pct+'%';
+  showPage('results-page'); stopMusic();
 }
 
-window.playAgain = function(){ if(lastSetJson) startGame(lastSetJson); };
-window.quitGame  = function(){ clearInterval(timer); showPage('dashboard-page'); };
+window.playAgain=function(){if(lastSetJson)startGame(lastSetJson);};
+window.quitGame=function(){clearInterval(gameTimer);showPage('dashboard-page');};
 
-// ── Study ──────────────────────────────────────────────────
-window.startStudy = function(sj){
-  currentSet = JSON.parse(sj);
-  if(!currentSet.questions?.length){ showToast('No questions!'); return; }
-  studyStreak=0; studyCorrect=0; studyIdx=0;
-  studyPool = shuffle([...currentSet.questions]);
-  document.getElementById('study-title').textContent = currentSet.title;
-  document.getElementById('study-done').style.display = 'none';
-  document.getElementById('study-q-card').style.display = 'block';
-  document.getElementById('study-tiles').style.display = 'grid';
+// ── MINI-GAMES ──
+let mgTimer=null, mgScore=0, mgDuration=10000;
+
+const MINI_GAMES=[
+  {name:'Tap Frenzy', fn: startTapGame},
+  {name:'Speed Math', fn: startMathGame},
+  {name:'Memory Match', fn: startMemoryGame},
+];
+
+function launchMiniGame() {
+  sfxBonus();
+  mgScore=0;
+  const game=MINI_GAMES[Math.floor(Math.random()*MINI_GAMES.length)];
+  document.getElementById('mg-title').textContent=game.name;
+  document.getElementById('mg-score-disp').textContent='0';
+  document.getElementById('mg-timer-bar').style.width='100%';
+  document.getElementById('mg-content').innerHTML='';
+  document.getElementById('minigame-overlay').classList.add('open');
+  const start=Date.now();
+  mgTimer=setInterval(()=>{
+    const elapsed=Date.now()-start;
+    const frac=Math.max(0,1-elapsed/mgDuration);
+    document.getElementById('mg-timer-bar').style.width=(frac*100)+'%';
+    if (elapsed>=mgDuration){clearInterval(mgTimer);endMiniGame();}
+  },50);
+  game.fn();
+}
+
+function endMiniGame() {
+  score+=mgScore;
+  document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
+  document.getElementById('minigame-overlay').classList.remove('open');
+  showToast(`Bonus: +${mgScore} pts!`);
+  qIdx++; renderQ();
+}
+
+// Tap Frenzy
+function startTapGame() {
+  const btn=document.createElement('button');
+  btn.className='tap-target';
+  btn.innerHTML=`<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8l-4-4-4 4M16 4v14M8 20l4 4 4-4"/></svg>`;
+  btn.onclick=()=>{
+    mgScore+=25;
+    document.getElementById('mg-score-disp').textContent=mgScore;
+    btn.style.transform='scale(0.88)';
+    setTimeout(()=>btn.style.transform='',80);
+    playTone(700,'sine',0.08,0.15);
+  };
+  document.getElementById('mg-content').appendChild(btn);
+}
+
+// Speed Math
+let mathAnswer=0;
+function startMathGame() {
+  nextMath();
+}
+
+function nextMath() {
+  const a=Math.floor(Math.random()*12)+1;
+  const b=Math.floor(Math.random()*12)+1;
+  const ops=['+','-','×'];
+  const op=ops[Math.floor(Math.random()*ops.length)];
+  let ans;
+  if(op==='+') ans=a+b;
+  else if(op==='-') ans=a-b;
+  else ans=a*b;
+  mathAnswer=ans;
+  const wrongs=[];
+  while(wrongs.length<3){
+    const w=ans+Math.floor(Math.random()*10)-5;
+    if(w!==ans&&!wrongs.includes(w)&&w!==ans)wrongs.push(w);
+  }
+  const choices=shuffle([ans,...wrongs.slice(0,3)]);
+  document.getElementById('mg-content').innerHTML=`
+    <div class="math-display">${a} ${op} ${b} = ?</div>
+    <div class="math-choices">
+      ${choices.map(c=>`<button class="math-btn" onclick="pickMath(${c},this)">${c}</button>`).join('')}
+    </div>`;
+}
+
+window.pickMath=function(val,btn){
+  if(val===mathAnswer){
+    mgScore+=50; btn.classList.add('correct-mg');
+    document.getElementById('mg-score-disp').textContent=mgScore;
+    playTone(880,'sine',0.12,0.2);
+    setTimeout(nextMath,400);
+  } else {
+    btn.classList.add('wrong-mg');
+    playTone(220,'square',0.15,0.2);
+    setTimeout(()=>btn.classList.remove('wrong-mg'),400);
+  }
+};
+
+// Memory Match
+const MEM_ICONS=[
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><circle cx="14" cy="14" r="10"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><rect x="4" y="4" width="20" height="20" rx="3"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><polygon points="14,3 25,24 3,24"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><polygon points="14,3 25,14 14,25 3,14"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><path d="M14 4l2.4 7.4H24l-6.2 4.5 2.4 7.4L14 19l-6.2 4.3 2.4-7.4L4 11.4h7.6z"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><path d="M14 6c0 4-8 8-8 8s8 4 8 8 8-4 8-8-8-4-8-8z"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><path d="M8 4h12l4 4v16H4V4h4z"/></svg>`,
+  `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"><path d="M4 14h20M14 4v20"/></svg>`,
+];
+
+let memFlipped=[], memMatched=[], memCards=[];
+
+function startMemoryGame() {
+  memFlipped=[]; memMatched=[];
+  const pairs=MEM_ICONS.slice(0,4);
+  const deck=shuffle([...pairs,...pairs]);
+  memCards=deck;
+  const grid=document.createElement('div');
+  grid.className='mem-grid';
+  deck.forEach((icon,i)=>{
+    const card=document.createElement('div');
+    card.className='mem-card';
+    card.dataset.idx=i;
+    card.dataset.val=pairs.indexOf(icon);
+    card.innerHTML='';
+    card.onclick=()=>flipCard(card,icon,i);
+    grid.appendChild(card);
+  });
+  document.getElementById('mg-content').appendChild(grid);
+}
+
+function flipCard(card, icon, idx) {
+  if(memMatched.includes(idx)||memFlipped.includes(idx)||memFlipped.length>=2) return;
+  card.innerHTML=icon; card.classList.add('flipped');
+  memFlipped.push(idx);
+  if(memFlipped.length===2){
+    const [a,b]=memFlipped;
+    const cards=document.querySelectorAll('.mem-card');
+    if(cards[a].dataset.val===cards[b].dataset.val){
+      memMatched.push(a,b);
+      cards[a].classList.add('matched'); cards[b].classList.add('matched');
+      mgScore+=100;
+      document.getElementById('mg-score-disp').textContent=mgScore;
+      playTone(880,'sine',0.1,0.15);
+      memFlipped=[];
+    } else {
+      setTimeout(()=>{
+        cards[a].innerHTML=''; cards[b].innerHTML='';
+        cards[a].classList.remove('flipped'); cards[b].classList.remove('flipped');
+        memFlipped=[];
+      },700);
+    }
+  }
+}
+
+// ── STUDY MODE (timed scoring) ──
+window.startStudy = function(sj) {
+  currentSet=JSON.parse(sj);
+  if (!currentSet.questions?.length){showToast('No questions!');return;}
+  studyPool=shuffle([...currentSet.questions]);
+  studyIdx=0; studyScore=0; studyCorrect=0; studyWrong=0; studyQTime=0;
+  document.getElementById('study-title').textContent=currentSet.title;
+  document.getElementById('study-pts-pill').textContent='0 pts';
   showPage('study-page');
   renderStudy();
 };
 
-function renderStudy(){
-  if(studyStreak >= 3){
-    document.getElementById('study-done').style.display = 'block';
-    document.getElementById('study-q-card').style.display = 'none';
-    document.getElementById('study-tiles').style.display = 'none';
-    document.getElementById('study-fb').style.display = 'none';
-    document.getElementById('streak-banner').style.display = 'none';
-    return;
-  }
-  if(studyIdx >= studyPool.length){ studyPool=shuffle([...currentSet.questions]); studyIdx=0; }
-  const q = studyPool[studyIdx];
-  document.getElementById('study-q-label').textContent = `Question ${studyCorrect+1}`;
-  document.getElementById('study-q-text').textContent = q.question;
-  document.getElementById('study-fb').style.display = 'none';
-  document.getElementById('study-streak-pill').textContent = `${studyStreak}🔥`;
-  const sb = document.getElementById('streak-banner');
-  sb.textContent = `🔥 ${studyStreak} in a row!`;
-  sb.style.display = studyStreak>0 ? 'block' : 'none';
-
-  const cont = document.getElementById('study-tiles');
-  cont.innerHTML = '';
+function renderStudy() {
+  if (studyIdx>=studyPool.length){endStudy();return;}
+  const q=studyPool[studyIdx];
+  document.getElementById('study-q-label').textContent=`Question ${studyIdx+1} of ${studyPool.length}`;
+  document.getElementById('study-q-text').textContent=q.question;
+  document.getElementById('study-q-pill').textContent=`Q ${studyIdx+1}`;
+  document.getElementById('study-prog').style.width=`${(studyIdx/studyPool.length)*100}%`;
+  document.getElementById('study-fb').style.display='none';
+  studyQTime=0;
+  clearInterval(studyQTimer);
+  studyQTimer=setInterval(()=>{
+    studyQTime+=0.1;
+    document.getElementById('study-timer').textContent=studyQTime.toFixed(1)+'s';
+    document.getElementById('study-timer').classList.toggle('warn',studyQTime>15);
+  },100);
+  const cont=document.getElementById('study-tiles');
+  cont.innerHTML='';
   q.answers.forEach((ans,i)=>{
-    const b = document.createElement('button');
-    b.className = 'study-tile';
-    b.dataset.i = i;
-    b.innerHTML = `<span class="t-shape">${SHAPES[i]}</span>${esc(ans)}`;
-    b.onclick = ()=>pickStudy(i, q.correct, q);
+    const b=document.createElement('button');
+    b.className='study-tile'; b.dataset.i=i;
+    b.innerHTML=`<span class="t-shape">${SHAPES_SVG[i]}</span>${esc(ans)}`;
+    b.onclick=()=>pickStudy(i,q.correct,q);
     cont.appendChild(b);
   });
 }
 
-function pickStudy(idx, cor, q){
-  const btns = document.querySelectorAll('.study-tile');
+function pickStudy(idx, cor, q) {
+  clearInterval(studyQTimer);
+  const btns=document.querySelectorAll('.study-tile');
   btns.forEach(b=>b.disabled=true);
-  const ok = idx===cor;
+  const ok=idx===cor;
   btns.forEach((b,i)=>{
-    if(i===cor) b.classList.add('correct');
-    else if(i===idx && !ok) b.classList.add('wrong');
+    if(i===cor)b.classList.add('correct');
+    else if(i===idx&&!ok)b.classList.add('wrong');
     else b.classList.add('dim');
   });
-  const fb = document.getElementById('study-fb');
-  fb.style.display = 'block';
+  const fb=document.getElementById('study-fb');
+  fb.style.display='block';
   if(ok){
-    studyStreak++; studyCorrect++;
-    fb.className = 'feedback-strip ok';
-    fb.textContent = studyStreak>=3 ? '🎉 3 in a row — set complete!' : `✓ Correct! ${3-studyStreak} more to go`;
+    sfxCorrect(); studyCorrect++;
+    const pts=Math.max(50,Math.round(500/Math.max(1,studyQTime)));
+    studyScore+=pts;
+    fb.className='study-fb ok';
+    fb.textContent=`Correct! +${pts} pts (${studyQTime.toFixed(1)}s)`;
   } else {
-    studyStreak = 0;
-    fb.className = 'feedback-strip bad';
-    fb.textContent = `✗ Not quite — Answer: ${q.answers[cor]}`;
+    sfxWrong(); studyWrong++;
+    fb.className='study-fb bad';
+    fb.textContent=`Not quite — Answer: ${q.answers[cor]}`;
   }
-  document.getElementById('study-streak-pill').textContent = `${studyStreak}🔥`;
+  document.getElementById('study-pts-pill').textContent=`${studyScore.toLocaleString()} pts`;
   studyIdx++;
-  setTimeout(renderStudy, 1700);
+  setTimeout(renderStudy,1500);
 }
 
-// ── Boot ───────────────────────────────────────────────────
+function endStudy() {
+  const total=studyCorrect+studyWrong, pct=total?Math.round((studyCorrect/total)*100):0;
+  document.getElementById('r-icon').innerHTML=
+    pct>=80?`<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M18 8h28v22a14 14 0 0 1-28 0V8z" fill="#fbbf24" opacity="0.2" stroke="#fbbf24" stroke-width="1.8"/><path d="M8 8h10M46 8h10M14 24c0 5 2 8 4 10M50 24c0 5-2 8-4 10" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round"/><path d="M24 36l4 4 12-12" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    :`<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="8" width="48" height="38" rx="5" stroke="currentColor" stroke-width="1.8" opacity="0.3"/><path d="M16 20h32M16 28h20M16 36h24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.4"/></svg>`;
+  document.getElementById('r-title').textContent=pct>=80?'Excellent!':pct>=50?'Good job!':'Keep studying!';
+  document.getElementById('r-score').textContent=studyScore.toLocaleString();
+  document.getElementById('r-correct').textContent=studyCorrect;
+  document.getElementById('r-wrong').textContent=studyWrong;
+  document.getElementById('r-pct').textContent=pct+'%';
+  showPage('results-page');
+}
+
+// ── Boot ──
 (function init(){
-  const session = loadSession();
+  loadSettings();
+  const session=loadSession();
   if(session){
-    currentUser = { username: session.username, uid: session.uid };
-    document.getElementById('nav-uname').textContent = session.username;
-    document.getElementById('sets-nav-uname').textContent = session.username;
-    document.getElementById('dash-greeting').textContent = `Hey, ${session.username}! 👋`;
+    currentUser={username:session.username,uid:session.uid};
+    document.getElementById('nav-uname').textContent=session.username;
+    document.getElementById('sets-nav-uname').textContent=session.username;
+    document.getElementById('dash-greeting').textContent=`Hey, ${session.username}!`;
     showPage('dashboard-page');
   } else {
-    const ap = document.getElementById('auth-page');
-    ap.style.display = 'flex';
-    ap.classList.add('active');
+    const ap=document.getElementById('auth-page');
+    ap.style.display='flex'; ap.classList.add('active');
   }
   addQuestion();
 })();
