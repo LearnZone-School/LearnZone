@@ -1,26 +1,3 @@
-An updated version of the code is provided below, with the following
-modifications:
-
-1.  Fixed the Browse Sets Feature: Modified the query in loadBrowseSets() to
-    retrieve elements using a single-field filter on isPublic == true, and
-    sorted the results client-side within the JavaScript runtime. This bypasses
-    the Firestore constraint requiring a composite index (isPublic + createdAt),
-    allowing the browse feature to load sets correctly.
-2.  Removed All Emojis: Replaced every emoji across the login screen, dashboard,
-    action tiles, headers, quiz buttons, results, and game features with clean
-    inline SVGs, CSS shapes, or text labels.
-3.  Custom Game Shapes and Canvas Renders: Replaced the Kahoot-style quiz shape
-    emojis with sharp CSS geometric classes. Updated the Tower Defense mini-game
-    loop to draw castles, towers, and invaders directly onto the canvas
-    utilizing 2D canvas drawing paths instead of text emojis.
-4.  Transitioned to a Minimalistic, Flat Design: Stripped out background blobs,
-    drifting gradients, floating shapes, complex text shadows, and high-gloss
-    elements. Introduced standard system sans-serif typography with flat colors,
-    defined boundaries, card states, and subtle transitions to achieve a clean,
-    structured interface.
-
-Here is the complete updated file:
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,7 +79,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .dhero-emoji{color:var(--accent);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .sec-head h3{font-size:14px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.05em;}
-.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;}
 .action-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;cursor:pointer;transition:all .15s;}
 .action-tile:hover{border-color:var(--accent);background:var(--surface2);}
 .action-tile .ti{color:var(--accent);margin-bottom:12px;display:flex;align-items:center;}
@@ -178,11 +155,46 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .ans-dot.a{background:#e63946;} .ans-dot.b{background:#457b9d;} .ans-dot.c{background:#e9a020;} .ans-dot.d{background:#2a9d8f;}
 .ans-row input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);outline:none;}
 .ans-row input::placeholder{color:var(--text3);}
-.ans-check{appearance:none;width:20px;height:20px;border:2px solid var(--border);border-radius:50%;cursor:pointer;flex-shrink:0;transition:all .15s;position:relative;}
-.ans-check:checked{background:#2a9d8f;border-color:#2a9d8f;}
-.ans-check:checked::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-55%) rotate(45deg);width:5px;height:8px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;}
+
+/* Correct Radio Circle Design */
+.ans-check{
+  appearance:none;
+  -webkit-appearance:none;
+  width:22px;
+  height:22px;
+  border:1.5px solid var(--border);
+  border-radius:50%;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:all .15s;
+  position:relative;
+  background:var(--bg);
+}
+.ans-check:hover{
+  border-color:var(--accent);
+}
+.ans-check:checked{
+  background:#2a9d8f !important;
+  border-color:#2a9d8f !important;
+}
+.ans-check:checked::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-60%) rotate(45deg);
+  width:5px;
+  height:9px;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+}
+
 .btn-del-q{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:#f87171;border-radius:var(--radius-sm);width:28px;height:28px;font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
 .btn-del-q:hover{background:rgba(230,57,70,.1);border-color:rgba(230,57,70,.3);}
+
+.btn-dup-q{position:absolute;top:14px;right:48px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);width:28px;height:28px;font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.btn-dup-q:hover{background:var(--surface2);border-color:var(--accent);color:var(--text);}
+
 .btn-add-q{width:100%;background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:14px;font-family:inherit;font-size:14px;font-weight:700;color:var(--text2);cursor:pointer;margin-bottom:20px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .btn-add-q:hover{border-color:var(--accent);color:var(--accent);}
 
@@ -699,7 +711,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
     <input class="builder-input" id="set-title" placeholder="Set title (e.g. Biology Chapter 3)">
     <div class="share-row">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      <label style="flex:1;font-weight:600;color:var(--text2;font-size:14px)">Make this set public</label>
+      <label style="flex:1;font-weight:600;color:var(--text2);font-size:14px">Make this set public</label>
       <label class="toggle"><input type="checkbox" id="set-public"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
     </div>
     <div id="q-list"></div>
@@ -1107,11 +1119,9 @@ async function loadBrowseSets() {
   const grid=document.getElementById('browse-grid');
   grid.innerHTML='<div class="loading">Loading community sets…</div>';
   try {
-    // Single-field query to avoid multi-field index compilation requirements
     const snap=await getDocs(query(collection(db,'sets'),where('isPublic','==',true)));
     allBrowseSets=snap.docs.map(d=>({id:d.id,...d.data()}));
     
-    // Sort client-side to maintain ordering by creation date
     allBrowseSets.sort((a,b) => {
       const tA = a.createdAt?.seconds || 0;
       const tB = b.createdAt?.seconds || 0;
@@ -1189,6 +1199,9 @@ window.addQuestion = () => {
   const id=qCount;
   const div=document.createElement('div'); div.className='q-card'; div.dataset.qid=id;
   div.innerHTML=`<button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+    <button class="btn-dup-q" title="Duplicate Question" onclick="duplicateQuestion(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
     <div class="q-num">Question ${id}</div>
     <input class="q-input" name="q-${id}" placeholder="Type your question…">
     <div class="ans-grid">${LABELS.map((l,i)=>`
@@ -1199,9 +1212,59 @@ window.addQuestion = () => {
       </div>`).join('')}</div>`;
   document.getElementById('q-list').appendChild(div);
 };
+
+window.duplicateQuestion = (btn) => {
+  sfxClick();
+  const card = btn.closest('.q-card');
+  const qid = card.dataset.qid;
+  
+  // Extract values from source card
+  const qText = card.querySelector(`[name="q-${qid}"]`).value;
+  const answers = [0,1,2,3].map(i => card.querySelector(`[name="a-${qid}-${i}"]`).value);
+  const correctChoice = card.querySelector(`[name="cor-${qid}"]:checked`);
+  const correctIdx = correctChoice ? correctChoice.value : null;
+  
+  // Create copy
+  qCount++;
+  const newId = qCount;
+  const div = document.createElement('div');
+  div.className = 'q-card';
+  div.dataset.qid = newId;
+  div.innerHTML = `<button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+    <button class="btn-dup-q" title="Duplicate Question" onclick="duplicateQuestion(this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    <div class="q-num">Question ${newId} (Copy)</div>
+    <input class="q-input" name="q-${newId}" placeholder="Type your question…">
+    <div class="ans-grid">${LABELS.map((l,i)=>`
+      <div class="ans-row" id="arow-${newId}-${i}">
+        <div class="ans-dot ${DOTS[i]}">${l}</div>
+        <input type="text" name="a-${newId}-${i}" placeholder="Answer ${l}…">
+        <input type="radio" name="cor-${newId}" value="${i}" class="ans-check" onchange="markRow(${newId})">
+      </div>`).join('')}</div>`;
+  
+  // Insert duplicated card inline
+  card.parentNode.insertBefore(div, card.nextSibling);
+  
+  // Seed copy values
+  const copyCard = div;
+  copyCard.querySelector(`[name="q-${newId}"]`).value = qText;
+  [0,1,2,3].forEach(i => {
+    copyCard.querySelector(`[name="a-${newId}-${i}"]`).value = answers[i];
+  });
+  if(correctIdx !== null) {
+    const radio = copyCard.querySelector(`[name="cor-${newId}"][value="${correctIdx}"]`);
+    if(radio) {
+      radio.checked = true;
+      markRow(newId);
+    }
+  }
+};
+
 window.markRow = id => {
   for(let i=0;i<4;i++){const row=document.getElementById(`arow-${id}-${i}`);row.classList.toggle('is-correct',row.querySelector(`input[value="${i}"]`)?.checked);}
 };
+
 window.saveSet = async () => {
   sfxClick();
   const title=document.getElementById('set-title').value.trim();
@@ -1396,14 +1459,14 @@ function pick(idx,cor) {
     const pts=Math.max(100,timeLeft*50)*(streak>=3?2:1); score+=pts;
     fb.className='fb-strip ok';
     fb.innerHTML=`
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#2a9d8f;color:#fff;margin-right:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
       <span>Correct! +${pts} pts ${streak >= 3 ? '(Streak Bonus active)' : ''}</span>`;
     if(consecutiveCorrect>=3){consecutiveCorrect=0;setTimeout(()=>{clearInterval(gameTimer);launchMiniGame();},1200);return;}
   } else {
     sfxBad(); streak=0; wrong++; consecutiveCorrect=0;
     fb.className='fb-strip bad'; 
     fb.innerHTML=`
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#e63946;color:#fff;margin-right:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
       <span>Incorrect. Correct answer: ${esc(currentSet.questions[qIdx].answers[cor])}</span>`;
   }
   document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
@@ -1433,7 +1496,7 @@ function endGame() {
   const svgBook = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z"/></svg>`;
 
   document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
-  document.getElementById('r-title').textContent=pct>=80?'Excellent Session':pct>=50?'Good Work':'Keep Practicing';
+  document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
   document.getElementById('r-score').textContent=score.toLocaleString();
   document.getElementById('r-cor').textContent=correct;
   document.getElementById('r-wrn').textContent=wrong;
@@ -1660,13 +1723,13 @@ function pickStudy(idx,cor,q){
     sfxOk(); studyCorrect++; const pts=Math.max(50,Math.round(500/Math.max(1,studyQTime))); studyScore+=pts; 
     fb.className='study-fb ok'; 
     fb.innerHTML=`
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#2a9d8f;color:#fff;margin-right:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
       <span>Correct! +${pts} pts (${studyQTime.toFixed(1)}s)</span>`;
   } else {
     sfxBad(); studyWrong++; 
     fb.className='study-fb bad'; 
     fb.innerHTML=`
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#e63946;color:#fff;margin-right:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
       <span>Incorrect. Answer: ${esc(q.answers[cor])}</span>`;
   }
   document.getElementById('study-pts-pill').textContent=`${studyScore.toLocaleString()} pts`;
