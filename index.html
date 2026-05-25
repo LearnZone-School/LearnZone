@@ -348,8 +348,27 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--text);}
 
 /* Question bubble */
-.q-bubble{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 36px;width:100%;max-width:760px;text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center;}
+.q-bubble{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 36px;width:100%;max-width:760px;text-align:center;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
 .q-text{font-size:22px;font-weight:700;color:var(--text);line-height:1.35;}
+
+/* Standard Question Image Container for Mobile Viewports */
+.q-img-wrap {
+  width: 100%;
+  max-width: 440px;
+  height: 220px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background-color: var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.q-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
 
 /* Answer tiles (Adapts dynamically to 2 or 4 grid options) */
 .ans-tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:760px;}
@@ -476,8 +495,8 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .study-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;gap:16px;}
 .study-timer{font-size:32px;font-weight:700;color:var(--text2);}
 .study-timer.warn{color:#f87171;}
-.study-q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 36px;width:100%;max-width:720px;text-align:center;}
-.study-q-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.study-q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 36px;width:100%;max-width:720px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.study-q-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
 .study-q-text{font-size:20px;font-weight:700;color:var(--text);line-height:1.4;}
 .study-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:720px;}
 .study-tile{border:1px solid var(--border);border-radius:var(--radius);padding:0 18px;height:74px;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;transition:all .15s;}
@@ -877,6 +896,23 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
       <label style="flex:1;font-weight:600;color:var(--text2);font-size:14px">Make this set public</label>
       <label class="toggle"><input type="checkbox" id="set-public"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
     </div>
+    
+    <!-- New set thumbnail selector block -->
+    <div class="field" style="margin-bottom: 22px;">
+      <label>Set Thumbnail</label>
+      <div style="display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1.5px dashed var(--border); padding: 12px; border-radius: var(--radius-sm);">
+        <div id="builder-thumb-preview" style="width: 60px; height: 60px; border-radius: var(--radius-sm); background: var(--bg2); border: 1px solid var(--border); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div style="flex: 1;">
+          <input type="file" id="set-thumb-file" accept="image/png, image/jpeg" style="display: none;" onchange="handleThumbnailSelect(this)">
+          <button class="btn-sm secondary" type="button" onclick="document.getElementById('set-thumb-file').click()">Upload PNG/JPG</button>
+          <button class="btn-sm secondary" type="button" id="btn-remove-thumb" style="display: none; margin-left: 8px; color: var(--k1);" onclick="removeThumbnail()">Remove</button>
+          <p style="font-size: 11px; color: var(--text3); margin-top: 4px;">Thumbnails are automatically optimized for mobile page speeds.</p>
+        </div>
+      </div>
+    </div>
+
     <div id="q-list"></div>
     <button class="btn-add-q" onclick="addQuestion()">+ Add Question</button>
     <button class="btn-primary" onclick="saveSet()">Save Set</button>
@@ -906,7 +942,15 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
       </svg>
       <div class="timer-num" id="timer">20</div>
     </div>
-    <div class="q-bubble"><div class="q-text" id="q-text">Loading…</div></div>
+    
+    <!-- Question Bubble containing title and dynamic image container in the middle -->
+    <div class="q-bubble">
+      <div class="q-text" id="q-text">Loading…</div>
+      <div id="game-q-image-container" class="q-img-wrap" style="display: none;">
+        <img id="game-q-image" src="" alt="Question Image Reference">
+      </div>
+    </div>
+    
     <div class="ans-tiles" id="ans-tiles"></div>
     <div class="fb-strip" id="game-fb"></div>
   </div>
@@ -941,6 +985,10 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
     <div class="study-q-card">
       <div class="study-q-lbl" id="study-q-lbl">Question 1</div>
       <div class="study-q-text" id="study-q-text">Loading…</div>
+      <!-- Study mode question image container in the middle -->
+      <div id="study-q-image-container" class="q-img-wrap" style="display: none;">
+        <img id="study-q-image" src="" alt="Study Image Reference">
+      </div>
     </div>
     <div class="study-tiles" id="study-tiles"></div>
     <div class="study-fb" id="study-fb"></div>
@@ -1056,6 +1104,10 @@ let sessionTimeLeft = 120; // 2 minutes (120s)
 // Persistent Tower Defense Meta State (across quiz sessions)
 let globalTdState = null;
 
+// New Builder Image Management States
+let builderThumbnailBase64 = null;
+let builderQuestionImages = {}; // Keyed by question unique ID
+
 // ── Audio ──
 function getAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
 function playTone(f, t, d, v) {
@@ -1091,6 +1143,91 @@ function loadSettings() {
   const th=localStorage.getItem('lz_theme');
   if(th) window.setTheme(th); else window.setTheme('dark');
 }
+
+// ── Client-Side Responsive Image Optimization ──
+function optimizeImage(file, maxWidth, maxHeight) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.85)); // Optimized mobile payload balance
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+}
+
+// ── Set Thumbnail Actions ──
+window.handleThumbnailSelect = async (input) => {
+  if (input.files && input.files[0]) {
+    try {
+      const b64 = await optimizeImage(input.files[0], 240, 180);
+      builderThumbnailBase64 = b64;
+      const preview = document.getElementById('builder-thumb-preview');
+      preview.style.backgroundImage = `url(${b64})`;
+      preview.innerHTML = '';
+      document.getElementById('btn-remove-thumb').style.display = 'inline-block';
+    } catch (e) {
+      showToast('Image optimization failed.');
+    }
+  }
+};
+
+window.removeThumbnail = () => {
+  builderThumbnailBase64 = null;
+  const preview = document.getElementById('builder-thumb-preview');
+  preview.style.backgroundImage = 'none';
+  preview.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+  document.getElementById('btn-remove-thumb').style.display = 'none';
+  document.getElementById('set-thumb-file').value = '';
+};
+
+// ── Question Specific Image Actions ──
+window.handleQuestionImageSelect = async (uniqueId, input) => {
+  if (input.files && input.files[0]) {
+    try {
+      const b64 = await optimizeImage(input.files[0], 600, 450); // Balanced mobile view height limit
+      builderQuestionImages[uniqueId] = b64;
+      const preview = document.getElementById(`q-img-preview-${uniqueId}`);
+      preview.style.backgroundImage = `url(${b64})`;
+      preview.innerHTML = '';
+      document.getElementById(`btn-remove-q-img-${uniqueId}`).style.display = 'inline-block';
+    } catch (e) {
+      showToast('Image optimization failed.');
+    }
+  }
+};
+
+window.removeQuestionImage = (uniqueId) => {
+  delete builderQuestionImages[uniqueId];
+  const preview = document.getElementById(`q-img-preview-${uniqueId}`);
+  preview.style.backgroundImage = 'none';
+  preview.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+  document.getElementById(`btn-remove-q-img-${uniqueId}`).style.display = 'none';
+  document.getElementById(`q-img-file-${uniqueId}`).value = '';
+};
 
 // ── Utils ──
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1214,7 +1351,9 @@ async function loadDash() {
     sets.slice(0,6).forEach(s=>{
       const c=document.createElement('div'); c.className='set-card';
       const pub=s.isPublic?`<span class="sc-public-badge">Public</span>`:'';
-      c.innerHTML=`<h4>${esc(s.title)}</h4><div class="sc-meta"><span>${(s.questions||[]).length} questions</span>${pub}</div>`;
+      const thumbStyle = s.thumbnail ? `background-image: url(${s.thumbnail}); background-size: cover; background-position: center;` : '';
+      const thumbHTML = s.thumbnail ? `<div style="width: 100%; height: 100px; border-radius: var(--radius-sm); margin-bottom: 8px; ${thumbStyle}"></div>` : '';
+      c.innerHTML=`${thumbHTML}<h4>${esc(s.title)}</h4><div class="sc-meta"><span>${(s.questions||[]).length} questions</span>${pub}</div>`;
       grid.appendChild(c);
     });
     el.appendChild(grid);
@@ -1241,8 +1380,11 @@ async function loadSetsPage() {
       const c=document.createElement('div'); c.className='set-full-card';
       const qc=(s.questions||[]).length;
       const sj=JSON.stringify(JSON.stringify(s));
+      const thumbStyle = s.thumbnail ? `background-image: url(${s.thumbnail}); background-size: cover; background-position: center;` : '';
+      const thumbHTML = s.thumbnail ? `<div style="width: 100%; height: 120px; border-radius: var(--radius-sm); margin-bottom: 12px; ${thumbStyle}"></div>` : '';
+      
       if(mode==='host'){
-        c.innerHTML=`<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
+        c.innerHTML=`${thumbHTML}<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
           <div class="card-row">
             <button class="bc host" onclick='openHostSetup(${sj}, "host")'>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg>
@@ -1257,7 +1399,7 @@ async function loadSetsPage() {
             </button>
           </div>`;
       } else {
-        c.innerHTML=`<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
+        c.innerHTML=`${thumbHTML}<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
           <div class="card-row">
             <button class="bc game" onclick='openHostSetup(${sj}, "solo")'>Play</button>
             <button class="bc share" onclick="openShareModal('${s.id}','${esc(s.title)}')">
@@ -1313,7 +1455,10 @@ function renderBrowse(sets) {
     const c=document.createElement('div'); c.className='pub-set-card';
     const qc=(s.questions||[]).length;
     const sj=JSON.stringify(JSON.stringify(s));
-    c.innerHTML=`<h3>${esc(s.title)}</h3><div class="pub-set-meta">by ${esc(s.uid||'anonymous')} · ${qc} question${qc!==1?'s':''}</div>
+    const thumbStyle = s.thumbnail ? `background-image: url(${s.thumbnail}); background-size: cover; background-position: center;` : '';
+    const thumbHTML = s.thumbnail ? `<div style="width: 100%; height: 120px; border-radius: var(--radius-sm); margin-bottom: 12px; ${thumbStyle}"></div>` : '';
+    
+    c.innerHTML=`${thumbHTML}<h3>${esc(s.title)}</h3><div class="pub-set-meta">by ${esc(s.uid||'anonymous')} · ${qc} question${qc!==1?'s':''}</div>
       <div class="card-row">
         <button class="btn-sm primary" onclick='openHostSetup(${sj}, "solo")'>Play Game</button>
         <button class="btn-sm copy" onclick='cloneSet(${sj})'>
@@ -1335,7 +1480,7 @@ window.cloneSet = async sj => {
   const s=JSON.parse(sj);
   if(!currentUser){showToast('Sign in to clone sets.');return;}
   try {
-    await addDoc(collection(db,'sets'),{uid:currentUser.uid,title:s.title+' (copy)',questions:s.questions||[],isPublic:false,createdAt:serverTimestamp()});
+    await addDoc(collection(db,'sets'),{uid:currentUser.uid,title:s.title+' (copy)',questions:s.questions||[],isPublic:false,createdAt:serverTimestamp(),thumbnail:s.thumbnail||null});
     showToast('Set cloned to your library.'); loadDash();
   } catch(e){ showToast('Clone failed.'); }
 };
@@ -1377,6 +1522,21 @@ window.addQuestion = () => {
     </div>
 
     <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
+    
+    <!-- Question image upload container inside set builder page -->
+    <div style="margin-bottom: 14px;">
+      <div style="display: flex; gap: 12px; align-items: center; background: var(--bg); border: 1.5px dashed var(--border); padding: 10px; border-radius: var(--radius-sm);">
+        <div id="q-img-preview-${uniqueId}" style="width: 50px; height: 50px; background: var(--bg2); border-radius: var(--radius-sm); border: 1px solid var(--border); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
+          <input type="file" id="q-img-file-${uniqueId}" accept="image/png, image/jpeg" style="display: none;" onchange="handleQuestionImageSelect(${uniqueId}, this)">
+          <button class="btn-sm secondary" type="button" style="padding: 6px 12px; font-size: 12px;" onclick="document.getElementById('q-img-file-${uniqueId}').click()">Add Question Image</button>
+          <button class="btn-sm secondary" id="btn-remove-q-img-${uniqueId}" type="button" style="display: none; padding: 6px 12px; font-size: 12px; color: var(--k1);" onclick="removeQuestionImage(${uniqueId})">Remove</button>
+        </div>
+      </div>
+    </div>
+
     <div class="ans-grid" id="ans-grid-${uniqueId}"></div>`;
   document.getElementById('q-list').appendChild(div);
   
@@ -1454,6 +1614,21 @@ window.duplicateQuestion = (btn) => {
     </div>
 
     <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
+    
+    <!-- Question image upload container inside set builder page -->
+    <div style="margin-bottom: 14px;">
+      <div style="display: flex; gap: 12px; align-items: center; background: var(--bg); border: 1.5px dashed var(--border); padding: 10px; border-radius: var(--radius-sm);">
+        <div id="q-img-preview-${uniqueId}" style="width: 50px; height: 50px; background: var(--bg2); border-radius: var(--radius-sm); border: 1px solid var(--border); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
+          <input type="file" id="q-img-file-${uniqueId}" accept="image/png, image/jpeg" style="display: none;" onchange="handleQuestionImageSelect(${uniqueId}, this)">
+          <button class="btn-sm secondary" type="button" style="padding: 6px 12px; font-size: 12px;" onclick="document.getElementById('q-img-file-${uniqueId}').click()">Add Question Image</button>
+          <button class="btn-sm secondary" id="btn-remove-q-img-${uniqueId}" type="button" style="display: none; padding: 6px 12px; font-size: 12px; color: var(--k1);" onclick="removeQuestionImage(${uniqueId})">Remove</button>
+        </div>
+      </div>
+    </div>
+
     <div class="ans-grid" id="ans-grid-${uniqueId}"></div>`;
   
   // Insert duplicated card inline right after the source card
@@ -1478,6 +1653,20 @@ window.duplicateQuestion = (btn) => {
       markRow(uniqueId);
     }
   }
+
+  // Duplicate image state reference inside memory
+  if (builderQuestionImages[qid]) {
+    builderQuestionImages[uniqueId] = builderQuestionImages[qid];
+    setTimeout(() => {
+      const preview = document.getElementById(`q-img-preview-${uniqueId}`);
+      if (preview) {
+        preview.style.backgroundImage = `url(${builderQuestionImages[uniqueId]})`;
+        preview.innerHTML = '';
+      }
+      const removeBtn = document.getElementById(`btn-remove-q-img-${uniqueId}`);
+      if (removeBtn) removeBtn.style.display = 'inline-block';
+    }, 50);
+  }
   
   reindexQuestions();
 };
@@ -1485,6 +1674,8 @@ window.duplicateQuestion = (btn) => {
 window.deleteQuestion = (btn) => {
   sfxClick();
   const card = btn.closest('.q-card');
+  const qid = card.dataset.qid;
+  delete builderQuestionImages[qid];
   card.remove();
   reindexQuestions();
 };
@@ -1532,17 +1723,31 @@ window.saveSet = async () => {
     
     const cor=c.querySelector(`[name="cor-${qid}"]:checked`);
     if(!qt || (qtype === 'quiz' && ans.some(a=>!a)) || !cor){valid=false;return;}
+    
+    const img = builderQuestionImages[qid] || null;
     questions.push({
       question:qt,
       answers:ans,
       correct:+cor.value,
-      type: qtype
+      type: qtype,
+      image: img
     });
   });
   if(!valid){showToast('Fill all fields and mark correct answers.');return;}
   try {
-    await addDoc(collection(db,'sets'),{uid:currentUser.uid,title,questions,isPublic,createdAt:serverTimestamp()});
-    showToast('Set saved.'); document.getElementById('set-title').value=''; document.getElementById('q-list').innerHTML='';
+    await addDoc(collection(db,'sets'),{
+      uid:currentUser.uid,
+      title,
+      questions,
+      isPublic,
+      thumbnail: builderThumbnailBase64,
+      createdAt:serverTimestamp()
+    });
+    showToast('Set saved.'); 
+    document.getElementById('set-title').value=''; 
+    document.getElementById('q-list').innerHTML='';
+    removeThumbnail();
+    builderQuestionImages = {};
     showPage('dashboard-page');
   } catch(e){ showToast('Save failed.'); }
 };
@@ -1770,6 +1975,18 @@ function renderQ() {
   }
   const q=sessionQuestions[qIdx]; answered=false;
   document.getElementById('q-text').textContent=q.question;
+
+  // Render question base64 optimized image if available
+  const imgCont = document.getElementById('game-q-image-container');
+  const imgEl = document.getElementById('game-q-image');
+  if (q.image) {
+    imgEl.src = q.image;
+    imgCont.style.display = 'flex';
+  } else {
+    imgCont.style.display = 'none';
+    imgEl.src = '';
+  }
+
   document.getElementById('game-prog').style.width=`${qIdx/sessionQuestions.length*100}%`;
   document.getElementById('game-fb').style.display='none';
   document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
@@ -1821,41 +2038,6 @@ function pick(idx,cor) {
   setTimeout(()=>{qIdx++;renderQ();},1600);
 }
 
-function timeUp() {
-  answered=true; sfxBad();
-  const q=sessionQuestions[qIdx];
-  document.querySelectorAll('.tile-btn').forEach((b,i)=>{b.disabled=true;b.classList.add(i===q.correct?'correct':'dim');});
-  streak=0; wrong++; consecutiveCorrect=0;
-  const fb=document.getElementById('game-fb'); fb.style.display='flex';
-  fb.className='fb-strip bad'; 
-  fb.innerHTML=`
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    <span>Time's up. Answer: ${esc(q.answers[q.correct])}</span>`;
-  setTimeout(()=>{qIdx++;renderQ();},1600);
-}
-
-function endGame() {
-  clearInterval(gameTimer);
-  stopGlobalSessionTimer();
-  const total=correct+wrong, pct=total?Math.round(correct/total*100):0;
-  
-  const svgTrophy = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/></svg>`;
-  const svgStar = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#e9c46a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-  const svgBook = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z"/></svg>`;
-
-  document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
-  document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
-  document.getElementById('r-score').textContent=score.toLocaleString();
-  document.getElementById('r-cor').textContent=correct;
-  document.getElementById('r-wrn').textContent=wrong;
-  document.getElementById('r-pct').textContent=pct+'%';
-  showPage('results-page');
-}
-
-window.playAgain = () => { if(lastSetJson) startGame(lastSetJson, chosenMiniGame); };
-window.quitGame = () => { clearInterval(gameTimer); stopGlobalSessionTimer(); goHome(); };
-window.goHome = () => { stopGlobalSessionTimer(); showPage(currentUser?.role==='student'?'student-page':'dashboard-page'); };
-
 // ── Session Countdown Manager ──
 function startGlobalSessionTimer(isStudy) {
   if (sessionEndTimer) clearInterval(sessionEndTimer);
@@ -1898,6 +2080,41 @@ function updateSessionTimerDisplay(element) {
   const sec = sessionTimeLeft % 60;
   element.textContent = `Time: ${min}:${sec.toString().padStart(2, '0')}`;
 }
+
+function timeUp() {
+  answered=true; sfxBad();
+  const q=sessionQuestions[qIdx];
+  document.querySelectorAll('.tile-btn').forEach((b,i)=>{b.disabled=true;b.classList.add(i===q.correct?'correct':'dim');});
+  streak=0; wrong++; consecutiveCorrect=0;
+  const fb=document.getElementById('game-fb'); fb.style.display='flex';
+  fb.className='fb-strip bad'; 
+  fb.innerHTML=`
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Time's up. Answer: ${esc(q.answers[q.correct])}</span>`;
+  setTimeout(()=>{qIdx++;renderQ();},1600);
+}
+
+function endGame() {
+  clearInterval(gameTimer);
+  stopGlobalSessionTimer();
+  const total=correct+wrong, pct=total?Math.round(correct/total*100):0;
+  
+  const svgTrophy = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/></svg>`;
+  const svgStar = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#e9c46a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  const svgBook = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3)"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z"/></svg>`;
+
+  document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
+  document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
+  document.getElementById('r-score').textContent=score.toLocaleString();
+  document.getElementById('r-cor').textContent=correct;
+  document.getElementById('r-wrn').textContent=wrong;
+  document.getElementById('r-pct').textContent=pct+'%';
+  showPage('results-page');
+}
+
+window.playAgain = () => { if(lastSetJson) startGame(lastSetJson, chosenMiniGame); };
+window.quitGame = () => { clearInterval(gameTimer); stopGlobalSessionTimer(); goHome(); };
+window.goHome = () => { stopGlobalSessionTimer(); showPage(currentUser?.role==='student'?'student-page':'dashboard-page'); };
 
 // ── Mini-Games ──
 function launchMiniGame() {
@@ -2326,6 +2543,18 @@ function renderStudy(){
   const q=studyPool[studyIdx];
   document.getElementById('study-q-lbl').textContent= `Question ${studyIdx+1} of ${studyPool.length}`;
   document.getElementById('study-q-text').textContent=q.question;
+
+  // Render study specific responsive image element in the middle
+  const imgCont = document.getElementById('study-q-image-container');
+  const imgEl = document.getElementById('study-q-image');
+  if (q.image) {
+    imgEl.src = q.image;
+    imgCont.style.display = 'flex';
+  } else {
+    imgCont.style.display = 'none';
+    imgEl.src = '';
+  }
+
   document.getElementById('study-q-pill').textContent=`Q ${studyIdx+1}`;
   document.getElementById('study-prog').style.width=`${studyIdx/studyPool.length*100}%`;
   document.getElementById('study-fb').style.display='none';
@@ -2378,6 +2607,12 @@ function endStudy(){
   document.getElementById('r-pct').textContent=pct+'%';
   showPage('results-page');
 }
+
+// ── Globals Mapping for Module execution ──
+window.handleThumbnailSelect = handleThumbnailSelect;
+window.removeThumbnail = removeThumbnail;
+window.handleQuestionImageSelect = handleQuestionImageSelect;
+window.removeQuestionImage = removeQuestionImage;
 
 // ── Init ──
 (function init(){
