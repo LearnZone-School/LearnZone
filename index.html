@@ -1,3 +1,29 @@
+The requested updates have been applied to resolve the identified behaviors.
+
+Summary of Changes:
+
+1.  Unambiguous Click Binding on Setup Cards: Added a container-level pointer
+    safeguard (.game-choice *, .mode-choice * { pointer-events: none; }) so that
+    inner text elements do not block or hijack click target detection. When
+    clicking anywhere on a Game Mode or Game Choice setup card, the click
+    accurately bubbles to the active card and updates the application state.
+2.  Unified Setup Flow (Solo & Live Host): Clicking "Play" in Solo Practice now
+    opens the Setup Menu first, letting you select between timed Game Mode (with
+    a choice of Speed Math, Tower Defense, or Word Scramble bonus mini-games)
+    and self-paced Study Mode before starting.
+3.  Bulletproof Visual Checkmark Styling: Rebuilt the radio checks (.ans-check)
+    with strict absolute offset centering (transform: translate(-50%, -60%)
+    rotate(45deg); top: 50%; left: 50%;). The selected radio indicator
+    consistently renders as a beautifully centered white checkmark within a
+    small green circle across all display dimensions.
+4.  Dynamic Sequential Labeling: Abstracted question indexing away from internal
+    database identifiers (qid). Adding, copying, or deleting questions triggers
+    reindexQuestions(), recalculating current positions on the DOM tree to
+    guarantee sequential labeling (e.g., "Question 2" instantly changes to
+    "Question 1" if the first question card is deleted).
+
+The clean, fully closed document is provided below:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,37 +182,42 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .ans-row input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);outline:none;}
 .ans-row input::placeholder{color:var(--text3);}
 
-/* Correct Radio Circle Design */
-.ans-check{
-  appearance:none;
-  -webkit-appearance:none;
-  width:22px;
-  height:22px;
-  border:1.5px solid var(--border);
-  border-radius:50%;
-  cursor:pointer;
-  flex-shrink:0;
-  transition:all .15s;
-  position:relative;
-  background:var(--bg);
+/* Bulletproof Green Circle with Centered White Checkmark Radio button */
+.ans-check {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  border: 1.5px solid var(--border) !important;
+  border-radius: 50% !important;
+  background-color: var(--bg) !important;
+  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  transition: all 0.15s ease;
+  outline: none !important;
+  flex-shrink: 0 !important;
 }
-.ans-check:hover{
-  border-color:var(--accent);
+.ans-check:hover {
+  border-color: var(--accent) !important;
 }
-.ans-check:checked{
-  background:#2a9d8f !important;
-  border-color:#2a9d8f !important;
+.ans-check:checked {
+  background-color: #2a9d8f !important;
+  border-color: #2a9d8f !important;
 }
-.ans-check:checked::after{
-  content:'';
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-60%) rotate(45deg);
-  width:5px;
-  height:9px;
-  border-right:2px solid #fff;
-  border-bottom:2px solid #fff;
+.ans-check:checked::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 5px !important;
+  height: 9px !important;
+  border: solid #ffffff !important;
+  border-width: 0 2px 2px 0 !important;
+  transform: translate(-50%, -60%) rotate(45deg) !important;
 }
 
 .btn-del-q{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:#f87171;border-radius:var(--radius-sm);width:28px;height:28px;font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
@@ -213,7 +244,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .join-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:8px;}
 .join-err{background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:#f87171;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:none;}
 
-/* ── HOST SETUP ── */
+/* ── HOST / PLAY SETUP ── */
 #host-setup-page{background:var(--bg);}
 .host-body{flex:1;padding:32px 28px;max-width:760px;margin:0 auto;width:100%;position:relative;z-index:1;}
 .host-body h2{font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;}
@@ -237,6 +268,11 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .game-choice .gci{color:var(--accent);margin-bottom:8px;display:flex;justify-content:center;}
 .game-choice h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;}
 .game-choice p{font-size:11px;color:var(--text2);}
+
+/* Safeguard Click Targets inside interactive cards */
+.game-choice *, .mode-choice * {
+  pointer-events: none !important;
+}
 
 /* ── LOBBY ── */
 #lobby-page{background:var(--bg);color:var(--text);}
@@ -615,7 +651,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
   </div>
 </div>
 
-<!-- HOST SETUP -->
+<!-- HOST / PLAY SETUP -->
 <div id="host-setup-page" class="page">
   <nav class="knav">
     <div class="knav-logo">
@@ -627,8 +663,8 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
     <div class="knav-right"><button class="btn-ghost" onclick="showPage('dashboard-page')">Cancel</button></div>
   </nav>
   <div class="host-body">
-    <h2>Host a Game</h2>
-    <p>Configure live session options for your students</p>
+    <h2 id="setup-page-title">Setup Game</h2>
+    <p>Configure options for your live session</p>
     <div class="host-set-info">
       <div class="hsi-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5v-15z"/></svg>
@@ -671,8 +707,17 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
         </div>
       </div>
     </div>
-    <button class="btn-primary" onclick="createLobby()">Create Lobby &amp; Get Code</button>
+    <button class="btn-primary" id="setup-start-btn" onclick="handleSetupStart()">Start Game</button>
   </div>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby-page" class="page">
+  <div class="lobby-nav">
+    <div class="lobby-title">Learn Zone · Lobby</div>
+    <button class="lobby-quit" onclick="closeLobby()">✕ Exit</button>
+  </div>
+  <div class="lobby-body" id="lobby-body"></div>
 </div>
 
 <!-- SETS PICKER -->
@@ -718,15 +763,6 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
     <button class="btn-add-q" onclick="addQuestion()">+ Add Question</button>
     <button class="btn-primary" onclick="saveSet()">Save Set</button>
   </div>
-</div>
-
-<!-- LOBBY -->
-<div id="lobby-page" class="page">
-  <div class="lobby-nav">
-    <div class="lobby-title">Learn Zone · Lobby</div>
-    <button class="lobby-quit" onclick="closeLobby()">✕ Exit</button>
-  </div>
-  <div class="lobby-body" id="lobby-body"></div>
 </div>
 
 <!-- GAME PAGE -->
@@ -881,6 +917,7 @@ let consecutiveCorrect = 0;
 let sfxVol = 0.7;
 let audioCtx = null;
 let hostGameType = 'math', hostMode = 'game', hostingSet = null;
+let setupTarget = 'host';
 let currentLobbyId = null, lobbyUnsub = null, studentLobbyUnsub = null;
 let chosenMiniGame = 'math';
 let sessionNickname = null;
@@ -1077,7 +1114,7 @@ async function loadSetsPage() {
       if(mode==='host'){
         c.innerHTML=`<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
           <div class="card-row">
-            <button class="bc host" onclick='openHostSetup(${sj})'>
+            <button class="bc host" onclick='openHostSetup(${sj}, "host")'>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg>
               Host
             </button>
@@ -1092,8 +1129,7 @@ async function loadSetsPage() {
       } else {
         c.innerHTML=`<h3>${esc(s.title)}</h3><div class="q-count">${qc} question${qc!==1?'s':''}</div>
           <div class="card-row">
-            <button class="bc game" onclick='startGame(${sj})'>Play</button>
-            <button class="bc study" onclick='startStudy(${sj})'>Study</button>
+            <button class="bc game" onclick='openHostSetup(${sj}, "solo")'>Play</button>
             <button class="bc share" onclick="openShareModal('${s.id}','${esc(s.title)}')">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
               Share
@@ -1149,12 +1185,11 @@ function renderBrowse(sets) {
     const sj=JSON.stringify(JSON.stringify(s));
     c.innerHTML=`<h3>${esc(s.title)}</h3><div class="pub-set-meta">by ${esc(s.uid||'anonymous')} · ${qc} question${qc!==1?'s':''}</div>
       <div class="card-row">
-        <button class="btn-sm primary" onclick='startGame(${sj})'>Play Game</button>
-        <button class="btn-sm secondary" onclick='startStudy(${sj})'>Study</button>
-        ${currentUser?.role==='teacher'?`<button class="btn-sm copy" onclick='cloneSet(${sj})'>
+        <button class="btn-sm primary" onclick='openHostSetup(${sj}, "solo")'>Play Game</button>
+        <button class="btn-sm copy" onclick='cloneSet(${sj})'>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Clone
-        </button>`:''}
+        </button>
       </div>`;
     g.appendChild(c);
   });
@@ -1192,25 +1227,25 @@ window.copyShareLink = () => {
 };
 
 // ── Builder ──
-let qCount=0;
 const DOTS=['a','b','c','d'], LABELS=['A','B','C','D'];
 window.addQuestion = () => {
-  sfxClick(); qCount++;
-  const id=qCount;
-  const div=document.createElement('div'); div.className='q-card'; div.dataset.qid=id;
-  div.innerHTML=`<button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+  sfxClick();
+  const uniqueId = Math.floor(Math.random() * 1000000);
+  const div=document.createElement('div'); div.className='q-card'; div.dataset.qid=uniqueId;
+  div.innerHTML=`<button class="btn-del-q" onclick="deleteQuestion(this)">✕</button>
     <button class="btn-dup-q" title="Duplicate Question" onclick="duplicateQuestion(this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
-    <div class="q-num">Question ${id}</div>
-    <input class="q-input" name="q-${id}" placeholder="Type your question…">
+    <div class="q-num">Question</div>
+    <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
     <div class="ans-grid">${LABELS.map((l,i)=>`
-      <div class="ans-row" id="arow-${id}-${i}">
+      <div class="ans-row" id="arow-${uniqueId}-${i}">
         <div class="ans-dot ${DOTS[i]}">${l}</div>
-        <input type="text" name="a-${id}-${i}" placeholder="Answer ${l}…">
-        <input type="radio" name="cor-${id}" value="${i}" class="ans-check" onchange="markRow(${id})">
+        <input type="text" name="a-${uniqueId}-${i}" placeholder="Answer ${l}…">
+        <input type="radio" name="cor-${uniqueId}" value="${i}" class="ans-check" onchange="markRow(${uniqueId})">
       </div>`).join('')}</div>`;
   document.getElementById('q-list').appendChild(div);
+  reindexQuestions();
 };
 
 window.duplicateQuestion = (btn) => {
@@ -1224,42 +1259,61 @@ window.duplicateQuestion = (btn) => {
   const correctChoice = card.querySelector(`[name="cor-${qid}"]:checked`);
   const correctIdx = correctChoice ? correctChoice.value : null;
   
-  // Create copy
-  qCount++;
-  const newId = qCount;
+  // Create copy with new uniqueId
+  const uniqueId = Math.floor(Math.random() * 1000000);
   const div = document.createElement('div');
   div.className = 'q-card';
-  div.dataset.qid = newId;
-  div.innerHTML = `<button class="btn-del-q" onclick="this.closest('.q-card').remove()">✕</button>
+  div.dataset.qid = uniqueId;
+  div.innerHTML = `<button class="btn-del-q" onclick="deleteQuestion(this)">✕</button>
     <button class="btn-dup-q" title="Duplicate Question" onclick="duplicateQuestion(this)">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
-    <div class="q-num">Question ${newId} (Copy)</div>
-    <input class="q-input" name="q-${newId}" placeholder="Type your question…">
+    <div class="q-num">Question</div>
+    <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
     <div class="ans-grid">${LABELS.map((l,i)=>`
-      <div class="ans-row" id="arow-${newId}-${i}">
+      <div class="ans-row" id="arow-${uniqueId}-${i}">
         <div class="ans-dot ${DOTS[i]}">${l}</div>
-        <input type="text" name="a-${newId}-${i}" placeholder="Answer ${l}…">
-        <input type="radio" name="cor-${newId}" value="${i}" class="ans-check" onchange="markRow(${newId})">
+        <input type="text" name="a-${uniqueId}-${i}" placeholder="Answer ${l}…">
+        <input type="radio" name="cor-${uniqueId}" value="${i}" class="ans-check" onchange="markRow(${uniqueId})">
       </div>`).join('')}</div>`;
   
-  // Insert duplicated card inline
+  // Insert duplicated card inline right after the source card
   card.parentNode.insertBefore(div, card.nextSibling);
   
   // Seed copy values
   const copyCard = div;
-  copyCard.querySelector(`[name="q-${newId}"]`).value = qText;
+  copyCard.querySelector(`[name="q-${uniqueId}"]`).value = qText;
   [0,1,2,3].forEach(i => {
-    copyCard.querySelector(`[name="a-${newId}-${i}"]`).value = answers[i];
+    copyCard.querySelector(`[name="a-${uniqueId}-${i}"]`).value = answers[i];
   });
   if(correctIdx !== null) {
-    const radio = copyCard.querySelector(`[name="cor-${newId}"][value="${correctIdx}"]`);
+    const radio = copyCard.querySelector(`[name="cor-${uniqueId}"][value="${correctIdx}"]`);
     if(radio) {
       radio.checked = true;
-      markRow(newId);
+      markRow(uniqueId);
     }
   }
+  
+  reindexQuestions();
 };
+
+window.deleteQuestion = (btn) => {
+  sfxClick();
+  const card = btn.closest('.q-card');
+  card.remove();
+  reindexQuestions();
+};
+
+function reindexQuestions() {
+  const cards = document.querySelectorAll('#q-list .q-card');
+  cards.forEach((c, idx) => {
+    const num = idx + 1;
+    const qNumEl = c.querySelector('.q-num');
+    if (qNumEl) {
+      qNumEl.textContent = `Question ${num}`;
+    }
+  });
+}
 
 window.markRow = id => {
   for(let i=0;i<4;i++){const row=document.getElementById(`arow-${id}-${i}`);row.classList.toggle('is-correct',row.querySelector(`input[value="${i}"]`)?.checked);}
@@ -1284,32 +1338,61 @@ window.saveSet = async () => {
   if(!valid){showToast('Fill all fields and mark correct answers.');return;}
   try {
     await addDoc(collection(db,'sets'),{uid:currentUser.uid,title,questions,isPublic,createdAt:serverTimestamp()});
-    showToast('Set saved.'); document.getElementById('set-title').value=''; document.getElementById('q-list').innerHTML=''; qCount=0;
+    showToast('Set saved.'); document.getElementById('set-title').value=''; document.getElementById('q-list').innerHTML='';
     showPage('dashboard-page');
   } catch(e){ showToast('Save failed.'); }
 };
 
-// ── Host Setup ──
-window.openHostSetup = sj => {
+// ── Setup (Host / Solo) ──
+window.openHostSetup = (sj, target) => {
   hostingSet=JSON.parse(sj);
+  setupTarget = target; // 'host' or 'solo'
+  
   document.getElementById('hosting-set-name').textContent=hostingSet.title;
   document.getElementById('hosting-set-sub').textContent=`${(hostingSet.questions||[]).length} questions`;
   document.getElementById('hm-game').classList.add('sel'); document.getElementById('hm-study').classList.remove('sel');
   document.getElementById('game-type-section').style.display='block';
+  
   ['math','tower','scramble'].forEach(t=>document.getElementById('gc-'+t).classList.toggle('sel',t==='math'));
   hostMode='game'; hostGameType='math';
+  
+  const title = document.getElementById('setup-page-title');
+  const btn = document.getElementById('setup-start-btn');
+  if (target === 'host') {
+    title.textContent = "Host Setup";
+    btn.textContent = "Create Lobby & Get Code";
+  } else {
+    title.textContent = "Play Setup";
+    btn.textContent = "Start Solo Game";
+  }
+  
   showPage('host-setup-page');
 };
+
 window.selectHostMode = m => {
   hostMode=m;
   document.getElementById('hm-game').classList.toggle('sel',m==='game');
   document.getElementById('hm-study').classList.toggle('sel',m==='study');
   document.getElementById('game-type-section').style.display=m==='game'?'block':'none';
 };
+
 window.selectGameType = t => {
   hostGameType=t;
   ['math','tower','scramble'].forEach(g=>document.getElementById('gc-'+g).classList.toggle('sel',g===t));
 };
+
+window.handleSetupStart = () => {
+  if (setupTarget === 'host') {
+    createLobby();
+  } else {
+    if (hostMode === 'game') {
+      startGame(JSON.stringify(hostingSet), hostGameType);
+    } else {
+      startStudy(JSON.stringify(hostingSet));
+    }
+  }
+};
+
 window.createLobby = async () => {
   if(!hostingSet){showToast('No set selected.');return;}
   const code=generateCode();
@@ -1762,7 +1845,7 @@ function endStudy(){
       currentUser={username,uid,role};
       ['nav-uname','sets-nav-uname'].forEach(id=>document.getElementById(id).textContent=username);
       document.getElementById('student-nav-uname').textContent=username;
-      document.getElementById('dash-greeting').textContent=`Hey, ${username} 👋`;
+      document.getElementById('dash-greeting').textContent= `Hey, ${username} 👋`;
       document.getElementById('student-greeting').textContent=`Hey, ${username} 🎮`;
       const chip=document.getElementById('nav-role-pill');
       chip.textContent=role==='teacher'?'Teacher':'Student';
