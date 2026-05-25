@@ -1,9 +1,17 @@
+An SVG recreation of the graduation cap image has been generated and embedded as
+a browser-compatible Data URI inside the document's <link rel="icon"> element,
+serving as the website's favicon.
+
+The complete and closed codebase is provided below:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Learn Zone</title>
+<!-- Custom embedded SVG Favicon matching the uploaded image -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Cpath d='M16 9l9 4.5-9 4.5-9-4.5z' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 16v3c0 1.5 1.5 2.5 6 2.5s6-1 6-2.5v-3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 14v4.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root {
   --k1:#e63946; --k2:#457b9d; --k3:#e9c46a; --k4:#2a9d8f;
@@ -971,7 +979,6 @@ let allBrowseSets = [];
 let tdRound = 1, tdCanvas, tdCtx, tdAnimFrame, tdState = {};
 let mgTimer = null, mgScore = 0;
 const mgDuration = 10000;
-let currentShareSetId = null;
 
 // Persistent Tower Defense Meta State (across quiz sessions)
 let globalTdState = null;
@@ -1635,7 +1642,7 @@ function endGame() {
 
   document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
   document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
-  document.getElementById('r-score').textContent=score.toLocaleString();
+  document.getElementById('r-score').textContent=studyScore.toLocaleString();
   document.getElementById('r-cor').textContent=studyCorrect;
   document.getElementById('r-wrn').textContent=studyWrong;
   document.getElementById('r-pct').textContent=pct+'%';
@@ -1859,7 +1866,7 @@ window.startTdWave = () => {
 function drawMinimalistBalloon(ctx, x, y, size, color) {
   ctx.fillStyle = color;
   ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; stroke();
 }
 
 function drawMinimalistBird(ctx, x, y) {
@@ -1969,7 +1976,7 @@ function tdLoop(){
   
   const c=tdCtx; c.clearRect(0,0,W,H);
   
-  // Flat Minimalist background rendering
+  // Theme-Aware Flat Minimalist Background Rendering
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const bgCol = isDark ? '#18181c' : '#ffffff';
   const pathCol = isDark ? '#26262e' : '#f4f4f6';
@@ -2051,7 +2058,7 @@ window.startStudy = sj => {
 function renderStudy(){
   if(studyIdx>=studyPool.length){endStudy();return;}
   const q=studyPool[studyIdx];
-  document.getElementById('study-q-lbl').textContent=`Question ${studyIdx+1} of ${studyPool.length}`;
+  document.getElementById('study-q-lbl').textContent= `Question ${studyIdx+1} of ${studyPool.length}`;
   document.getElementById('study-q-text').textContent=q.question;
   document.getElementById('study-q-pill').textContent=`Q ${studyIdx+1}`;
   document.getElementById('study-prog').style.width=`${studyIdx/studyPool.length*100}%`;
