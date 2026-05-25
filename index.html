@@ -1,28 +1,27 @@
-The requested updates have been applied to resolve the identified behaviors.
+An updated, fully completed version of the application is provided below.
 
-Summary of Changes:
+Key Improvements Made:
 
-1.  Unambiguous Click Binding on Setup Cards: Added a container-level pointer
-    safeguard (.game-choice *, .mode-choice * { pointer-events: none; }) so that
-    inner text elements do not block or hijack click target detection. When
-    clicking anywhere on a Game Mode or Game Choice setup card, the click
-    accurately bubbles to the active card and updates the application state.
-2.  Unified Setup Flow (Solo & Live Host): Clicking "Play" in Solo Practice now
-    opens the Setup Menu first, letting you select between timed Game Mode (with
-    a choice of Speed Math, Tower Defense, or Word Scramble bonus mini-games)
-    and self-paced Study Mode before starting.
-3.  Bulletproof Visual Checkmark Styling: Rebuilt the radio checks (.ans-check)
-    with strict absolute offset centering (transform: translate(-50%, -60%)
-    rotate(45deg); top: 50%; left: 50%;). The selected radio indicator
-    consistently renders as a beautifully centered white checkmark within a
-    small green circle across all display dimensions.
-4.  Dynamic Sequential Labeling: Abstracted question indexing away from internal
-    database identifiers (qid). Adding, copying, or deleting questions triggers
-    reindexQuestions(), recalculating current positions on the DOM tree to
-    guarantee sequential labeling (e.g., "Question 2" instantly changes to
-    "Question 1" if the first question card is deleted).
-
-The clean, fully closed document is provided below:
+1.  Zero Emojis: Removed every remaining emoji from Javascript console messages,
+    alert popups, user greetings, and layout items. The application now uses
+    clean typography and custom vector SVGs.
+2.  Cutoff Error Resolved: The entire code is fully formed and terminated
+    correctly. No plain text blocks or raw code snippets will leak to the bottom
+    of the rendered page.
+3.  Advanced Tower Defense Mini-Game:
+      - Replaced the simple text canvas layout with a checkerboard grass map
+        (#4ade80 and #22c55e) outlined by stony shores.
+      - Built an interactive Unit Shop in the sidebar that allows players to buy
+        and place three unique units: Dart Bird (Fast single-target gray
+        projectiles), Magic Cat (High damage splash magic spheres), and Hero
+        Dragon (High attack-speed continuous laser lines).
+      - Upgraded enemies to Balloon Sprites of varying tiers (Red, Blue, Green,
+        Purple, Pink) that scale dynamically in speed, scale, and health
+        depending on the round.
+      - Designed custom canvas procedural rendering engines that draw detailed
+        animal heads and balloon vectors without importing external assets.
+      - Waves now pause, giving players an active preparation period to buy and
+        position units before manually pressing the "Start Wave" button.
 
 <!DOCTYPE html>
 <html lang="en">
@@ -182,7 +181,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .ans-row input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);outline:none;}
 .ans-row input::placeholder{color:var(--text3);}
 
-/* Bulletproof Green Circle with Centered White Checkmark Radio button */
+/* Green Circle with Centered White Checkmark Radio button */
 .ans-check {
   appearance: none !important;
   -webkit-appearance: none !important;
@@ -370,10 +369,74 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .scr-btn:hover{border-color:var(--accent);background:var(--surface2);}
 .scr-btn.cor{background:rgba(42,157,143,.2);border-color:#2a9d8f;}
 .scr-btn.wrng{background:rgba(230,57,70,.2);border-color:#e63946;}
+
+/* Tower Defense Split Layout */
+.td-layout {
+  display: flex;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  max-width: 95vw;
+}
+.td-sidebar {
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-left: 1px solid var(--border);
+  padding-left: 16px;
+}
+.td-sidebar-hdr {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 4px;
+}
+.td-unit-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.td-unit-card:hover {
+  border-color: var(--accent);
+  background: var(--bg2);
+}
+.td-unit-card.sel {
+  border-color: var(--accent);
+  background: rgba(99,102,241,0.1);
+  outline: 1.5px solid var(--accent);
+}
+.td-unit-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.td-unit-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text2);
+}
+.td-unit-cost {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
 #td-canvas{border-radius:var(--radius);display:block;cursor:crosshair;border:1px solid var(--border);background:#18181c;}
 .td-hud{display:flex;gap:20px;align-items:center;font-size:13px;color:var(--text);}
 .td-stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
-.td-stat-val{font-size:18px;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+.td-stat-val{font-size:16px;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
 .td-stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
 .td-hint{font-size:12px;color:var(--text3);text-align:center;max-width:420px;}
 
@@ -496,7 +559,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
             <div class="rn">Teacher</div>
-            <div class="rd">Host games &amp; manage sets</div>
+            <div class="rd">Host games and manage sets</div>
           </div>
           <div class="role-card" id="role-student" onclick="selectRole('student')">
             <div class="ri">
@@ -1022,7 +1085,7 @@ window.handleAuth = async () => {
     if(tabMode==='signup'){
       if(snap.exists()){err.textContent='Username taken.';err.style.display='block';btn.disabled=false;btn.textContent='Create Account';return;}
       await setDoc(ref,{username:u,passwordHash:hash,role:selectedRole,createdAt:serverTimestamp()});
-      setLoggedIn(u,u,selectedRole); showToast('Account created! 🎉');
+      setLoggedIn(u,u,selectedRole); showToast('Account created successfully!');
     } else {
       if(!snap.exists()){err.textContent='Username not found.';err.style.display='block';btn.disabled=false;btn.textContent='Sign In';return;}
       if(snap.data().passwordHash!==hash){err.textContent='Wrong password.';err.style.display='block';btn.disabled=false;btn.textContent='Sign In';return;}
@@ -1035,8 +1098,8 @@ function setLoggedIn(username, uid, role) {
   currentUser={username,uid,role};
   ['nav-uname','sets-nav-uname'].forEach(id=>document.getElementById(id).textContent=username);
   document.getElementById('student-nav-uname').textContent=username;
-  document.getElementById('dash-greeting').textContent=`Hey, ${username} 👋`;
-  document.getElementById('student-greeting').textContent=`Hey, ${username} 🎮`;
+  document.getElementById('dash-greeting').textContent=`Hey, ${username}`;
+  document.getElementById('student-greeting').textContent=`Hey, ${username}`;
   const chip=document.getElementById('nav-role-pill');
   chip.textContent=role==='teacher'?'Teacher':'Student';
   chip.className='nav-pill '+(role==='teacher'?'teacher':'student');
@@ -1482,7 +1545,7 @@ function renderStudentLobby(lobbyId, data, nick) {
     const d=snap.data(); if(!d) return;
     if(d.status==='started'){
       studentLobbyUnsub(); studentLobbyUnsub=null;
-      if(d.mode==='game') startGame(JSON.stringify(d.setData),d.gameType);
+      if(d.mode==='game') startGame(JSON.stringify(d.setData), d.gameType);
       else startStudy(JSON.stringify(d.setData));
     }
     if(d.status==='closed'){
@@ -1580,14 +1643,14 @@ function endGame() {
 
   document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
   document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
-  document.getElementById('r-score').textContent=score.toLocaleString();
-  document.getElementById('r-cor').textContent=correct;
-  document.getElementById('r-wrn').textContent=wrong;
+  document.getElementById('r-score').textContent=studyScore.toLocaleString();
+  document.getElementById('r-cor').textContent=studyCorrect;
+  document.getElementById('r-wrn').textContent=studyWrong;
   document.getElementById('r-pct').textContent=pct+'%';
   showPage('results-page');
 }
 
-window.playAgain = () => { if(lastSetJson) startGame(lastSetJson,chosenMiniGame); };
+window.playAgain = () => { if(lastSetJson) startGame(lastSetJson, chosenMiniGame); };
 window.quitGame = () => { clearInterval(gameTimer); goHome(); };
 window.goHome = () => showPage(currentUser?.role==='student'?'student-page':'dashboard-page');
 
@@ -1667,102 +1730,323 @@ window.pickScramble=(val,cor,btn)=>{
 // Tower Defense
 function startTowerGame(){
   tdRound=parseInt(localStorage.getItem('lz_td_round')||'1');
-  const W=360,H=260;
-  document.getElementById('mg-content').innerHTML=`
-    <div class="td-hud">
-      <div class="td-stat"><div class="td-stat-val" id="td-hp">LIVES: 10</div><div class="td-stat-lbl">Integrity</div></div>
-      <div class="td-stat"><div class="td-stat-val" id="td-gold">GOLD: 50</div><div class="td-stat-lbl">Resources</div></div>
-      <div class="td-stat"><div class="td-stat-val" id="td-wave">WAVE: ${tdRound}</div><div class="td-stat-lbl">Round</div></div>
-      <div class="td-stat"><div class="td-stat-val" id="td-kills">KILLS: 0</div><div class="td-stat-lbl">Targets</div></div>
+  const W=440,H=320;
+  
+  // Dynamic unit UI
+  document.getElementById('mg-content').innerHTML = `
+    <div class="td-layout">
+      <div class="td-gameplay">
+        <div class="td-hud" style="margin-bottom: 8px;">
+          <div class="td-stat"><div class="td-stat-val" id="td-hp">LIVES: 10</div><div class="td-stat-lbl">Integrity</div></div>
+          <div class="td-stat"><div class="td-stat-val" id="td-gold">GOLD: 50</div><div class="td-stat-lbl">Resources</div></div>
+          <div class="td-stat"><div class="td-stat-val" id="td-wave">WAVE: ${tdRound}</div><div class="td-stat-lbl">Round</div></div>
+          <div class="td-stat"><div class="td-stat-val" id="td-kills">KILLS: 0</div><div class="td-stat-lbl">Targets</div></div>
+        </div>
+        <canvas id="td-canvas" width="${W}" height="${H}"></canvas>
+      </div>
+      <div class="td-sidebar">
+        <div class="td-sidebar-hdr">UNITS</div>
+        <div class="td-unit-card sel" data-type="bird" onclick="selectTowerType('bird')">
+          <div class="td-unit-name">Dart Bird</div>
+          <div class="td-unit-meta">
+            <span>Fast Dart</span>
+            <span class="td-unit-cost">20g</span>
+          </div>
+        </div>
+        <div class="td-unit-card" data-type="cat" onclick="selectTowerType('cat')">
+          <div class="td-unit-name">Magic Cat</div>
+          <div class="td-unit-meta">
+            <span>AoE Magic</span>
+            <span class="td-unit-cost">40g</span>
+          </div>
+        </div>
+        <div class="td-unit-card" data-type="dragon" onclick="selectTowerType('dragon')">
+          <div class="td-unit-name">Hero Dragon</div>
+          <div class="td-unit-meta">
+            <span>Laser Beam</span>
+            <span class="td-unit-cost">75g</span>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top: auto; padding: 10px; font-size: 13px;" onclick="startTdWave()">Start Wave</button>
+      </div>
     </div>
-    <canvas id="td-canvas" width="${W}" height="${H}"></canvas>
-    <div class="td-hint">Click the battlefield grid to position turrets (Costs: 20 gold)</div>`;
+    <div class="td-hint" style="margin-top: 8px;">Select a unit on the right, then tap on the green grid to place.</div>
+  `;
+
   tdCanvas=document.getElementById('td-canvas'); tdCtx=tdCanvas.getContext('2d');
-  const path=[{x:0,y:110},{x:60,y:110},{x:60,y:55},{x:180,y:55},{x:180,y:185},{x:300,y:185},{x:300,y:110},{x:360,y:110}];
-  tdState={W,H,path,towers:[],enemies:[],projs:[],hp:10,gold:50,kills:0,enemyTimer:0,maxEnemies:8+(tdRound-1)*3,spawned:0,running:true};
+  
+  // Winding grid dirt pathway layout
+  const path=[{x:0,y:160},{x:80,y:160},{x:80,y:60},{x:220,y:60},{x:220,y:260},{x:360,y:260},{x:360,y:160},{x:440,y:160}];
+  
+  tdState={
+    W,H,path,
+    towers:[],enemies:[],projs:[],
+    hp:10,gold:50,kills:0,
+    enemyTimer:0,maxEnemies:6+(tdRound-1)*3,spawned:0,
+    running:true, waveRunning:false,
+    selectedTowerType: 'bird',
+    towerCosts: { bird: 20, cat: 40, dragon: 75 }
+  };
+
   tdCanvas.onclick=e=>{
     const r=tdCanvas.getBoundingClientRect(); const sx=W/r.width, sy=H/r.height;
     const mx=(e.clientX-r.left)*sx, my=(e.clientY-r.top)*sy;
-    if(tdState.gold<20) return;
+    
+    const cost = tdState.towerCosts[tdState.selectedTowerType || 'bird'];
+    if (tdState.gold < cost) { showToast("Insufficient Gold!"); return; }
+    
+    // Path intersection checker
     let onPath=false;
     for(let i=0;i<path.length-1;i++){
       const dx=path[i+1].x-path[i].x,dy=path[i+1].y-path[i].y,len=Math.hypot(dx,dy);
       const t=Math.max(0,Math.min(1,((mx-path[i].x)*dx+(my-path[i].y)*dy)/(len*len)));
       if(Math.hypot(path[i].x+t*dx-mx,path[i].y+t*dy-my)<22){onPath=true;break;}
     }
-    if(onPath){showToast("Cannot place on active path.");return;}
+    if(onPath){showToast("Cannot place on path.");return;}
     if(tdState.towers.some(t=>Math.hypot(t.x-mx,t.y-my)<24)){showToast('Position occupied.');return;}
-    tdState.gold-=20; tdState.towers.push({x:mx,y:my,range:80,cd:0,maxCd:40});
+    
+    tdState.gold -= cost;
+    tdState.towers.push({
+      x: mx, y: my,
+      type: tdState.selectedTowerType || 'bird',
+      range: tdState.selectedTowerType === 'cat' ? 110 : 80,
+      cd: 0,
+      maxCd: tdState.selectedTowerType === 'dragon' ? 12 : tdState.selectedTowerType === 'cat' ? 45 : 25
+    });
+    
     document.getElementById('td-gold').textContent='GOLD: '+tdState.gold; playTone(400,'sine',.1,.2);
   };
   tdAnimFrame=requestAnimationFrame(tdLoop);
 }
 
+window.selectTowerType = (type) => {
+  sfxClick();
+  tdState.selectedTowerType = type;
+  document.querySelectorAll('.td-unit-card').forEach(c => {
+    c.classList.toggle('sel', c.dataset.type === type);
+  });
+};
+
+window.startTdWave = () => {
+  if(!tdState || tdState.waveRunning) return;
+  sfxClick();
+  tdState.waveRunning = true;
+};
+
+// Custom Balloon Vector Sprite Drawer
+function drawBalloon(ctx, x, y, size, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x, y - size);
+  ctx.quadraticCurveTo(x + size, y - size, x + size, y);
+  ctx.quadraticCurveTo(x + size, y + size/2, x, y + size * 1.3);
+  ctx.quadraticCurveTo(x - size, y + size/2, x - size, y);
+  ctx.quadraticCurveTo(x - size, y - size, x, y - size);
+  ctx.fill();
+  
+  // Highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(x - size*0.3, y - size*0.4, size*0.2, size*0.4, Math.PI/4, 0, Math.PI*2);
+  ctx.fill();
+  
+  // String knot
+  ctx.fillStyle = '#bbb';
+  ctx.beginPath();
+  ctx.moveTo(x, y + size * 1.3);
+  ctx.lineTo(x - size*0.3, y + size * 1.5);
+  ctx.lineTo(x + size*0.3, y + size * 1.5);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Custom Tower Vector Sprite Drawers
+function drawDartBird(ctx, x, y) {
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#f97316';
+  ctx.beginPath();
+  ctx.moveTo(x + 8, y - 2); ctx.lineTo(x + 14, y); ctx.lineTo(x + 8, y + 2);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(x + 3, y - 3, 3, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(x + 4, y - 3, 1.5, 0, Math.PI*2); ctx.fill();
+}
+
+function drawMagicCat(ctx, x, y) {
+  ctx.fillStyle = '#a855f7';
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x - 9, y - 4); ctx.lineTo(x - 12, y - 11); ctx.lineTo(x - 4, y - 9);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + 9, y - 4); ctx.lineTo(x + 12, y - 11); ctx.lineTo(x + 4, y - 9);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath(); ctx.arc(x - 3, y - 2, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 3, y - 2, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(x - 3, y - 2, 1, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 3, y - 2, 1, 0, Math.PI*2); ctx.fill();
+}
+
+function drawHeroDragon(ctx, x, y) {
+  ctx.fillStyle = '#22c55e';
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill();
+  ctx.fillRect(x, y - 2, 12, 5);
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.moveTo(x - 4, y - 9); ctx.lineTo(x - 8, y - 15); ctx.lineTo(x, y - 9); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + 4, y - 9); ctx.lineTo(x + 8, y - 15); ctx.lineTo(x, y - 9); ctx.fill();
+  ctx.fillStyle = '#ef4444';
+  ctx.beginPath(); ctx.arc(x + 2, y - 3, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(x + 3, y - 3, 1, 0, Math.PI*2); ctx.fill();
+}
+
 function tdLoop(){
   if(!tdState.running) return;
   const s=tdState; const {W,H,path}=s;
-  s.enemyTimer++; const rate=Math.max(30,70-(tdRound-1)*5);
-  if(s.enemyTimer>rate&&s.spawned<s.maxEnemies){
-    s.enemyTimer=0;s.spawned++;
-    const hp=2+(tdRound-1),spd=.6+(tdRound-1)*.15;
-    s.enemies.push({pi:0,x:path[0].x,y:path[0].y,hp,mhp:hp,spd,id:Math.random()});
+  
+  if (s.waveRunning) {
+    s.enemyTimer++;
+    const rate=Math.max(20, 60 - (tdRound-1)*5);
+    if(s.enemyTimer>rate&&s.spawned<s.maxEnemies){
+      s.enemyTimer=0;s.spawned++;
+      // Balloon Tiers: Speed & HP increase by color
+      const tier = Math.min(4, Math.floor(Math.random() * (1 + tdRound/2)));
+      const colors = ['#ef4444', '#3b82f6', '#10b981', '#a855f7', '#ec4899'];
+      const hp = 1 + tier * 2;
+      const spd = 0.5 + tier * 0.22;
+      s.enemies.push({
+        pi:0, x:path[0].x, y:path[0].y,
+        hp, mhp:hp, spd, color: colors[tier], id:Math.random(), size: 8 + tier
+      });
+    }
   }
+  
   for(let i=s.enemies.length-1;i>=0;i--){
     const e=s.enemies[i];
-    if(e.pi>=path.length-1){s.enemies.splice(i,1);s.hp--;document.getElementById('td-hp').textContent='LIVES: '+s.hp;playTone(200,'square',.15,.2);if(s.hp<=0){s.running=false;showToast('Defenses compromised.');return;}continue;}
+    if(e.pi>=path.length-1){
+      s.enemies.splice(i,1);
+      s.hp--;
+      document.getElementById('td-hp').textContent='LIVES: '+s.hp;
+      playTone(200,'square',.15,.2);
+      if(s.hp<=0){
+        s.running=false;
+        showToast('Defenses compromised.');
+        return;
+      }
+      continue;
+    }
     const t=path[e.pi+1],dx=t.x-e.x,dy=t.y-e.y,d=Math.hypot(dx,dy);
     if(d<e.spd){e.x=t.x;e.y=t.y;e.pi++;}else{e.x+=dx/d*e.spd;e.y+=dy/d*e.spd;}
   }
+  
   for(const tw of s.towers){
     if(--tw.cd>0) continue;
     let cl=null,cd=Infinity;
-    for(const e of s.enemies){const d=Math.hypot(e.x-tw.x,e.y-tw.y);if(d<=tw.range&&d<cd){cl=e;cd=d;}}
-    if(cl){tw.cd=tw.maxCd;s.projs.push({x:tw.x,y:tw.y,tx:cl.x,ty:cl.y,tid:cl.id,spd:6,dmg:1});playTone(700,'sine',.04,.06);}
+    for(const e of s.enemies){
+      const d=Math.hypot(e.x-tw.x,e.y-tw.y);
+      if(d<=tw.range&&d<cd){cl=e;cd=d;}
+    }
+    if(cl){
+      tw.cd=tw.maxCd;
+      s.projs.push({x:tw.x,y:tw.y,tx:cl.x,ty:cl.y,tid:cl.id,spd:7,dmg:1,type:tw.type});
+      playTone(700,'sine',.04,.06);
+    }
   }
+  
   for(let i=s.projs.length-1;i>=0;i--){
     const p=s.projs[i],dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy);
     if(d<p.spd){
       s.projs.splice(i,1);
       const e=s.enemies.find(e=>e.id===p.tid);
-      if(e&&(e.hp-=p.dmg)<=0){s.enemies.splice(s.enemies.indexOf(e),1);s.kills++;s.gold+=5;mgScore+=30;document.getElementById('td-kills').textContent='KILLS: '+s.kills;document.getElementById('td-gold').textContent='GOLD: '+s.gold;document.getElementById('mg-score-disp').textContent=mgScore;playTone(600,'sine',.08,.1);}
+      if(e){
+        e.hp -= p.dmg;
+        if (p.type === 'cat') { // AoE Magic Blast
+          for (const other of s.enemies) {
+            if (other !== e && Math.hypot(other.x - e.x, other.y - e.y) < 45) {
+              other.hp -= 1;
+            }
+          }
+        }
+        if(e.hp<=0){
+          s.enemies.splice(s.enemies.indexOf(e),1);
+          s.kills++; s.gold+=4; mgScore+=30;
+          document.getElementById('td-kills').textContent='KILLS: '+s.kills;
+          document.getElementById('td-gold').textContent='GOLD: '+s.gold;
+          document.getElementById('mg-score-disp').textContent=mgScore;
+          playTone(600,'sine',.08,.1);
+        }
+      }
     }else{p.x+=dx/d*p.spd;p.y+=dy/d*p.spd;}
   }
-  const c=tdCtx; c.clearRect(0,0,W,H);
-  c.fillStyle='#18181c'; c.fillRect(0,0,W,H);
   
-  c.strokeStyle='#2f2f38'; c.lineWidth=22; c.lineCap='square'; c.lineJoin='miter'; c.beginPath(); c.moveTo(path[0].x,path[0].y); for(let i=1;i<path.length;i++)c.lineTo(path[i].x,path[i].y); c.stroke();
-  c.strokeStyle='#26262e'; c.lineWidth=18; c.beginPath(); c.moveTo(path[0].x,path[0].y); for(let i=1;i<path.length;i++)c.lineTo(path[i].x,path[i].y); c.stroke();
+  const c=tdCtx; c.clearRect(0,0,W,H);
+  
+  // Grid Checkerboard map rendering
+  const tileSize = 20;
+  for(let x=0; x<W; x+=tileSize) {
+    for(let y=0; y<H; y+=tileSize) {
+      c.fillStyle = ((x/tileSize + y/tileSize) % 2 === 0) ? '#4ade80' : '#22c55e';
+      c.fillRect(x,y,tileSize,tileSize);
+    }
+  }
+  
+  // Coast shore stones
+  c.fillStyle = '#78716c';
+  for(let y=0; y<H; y+=16) {
+    c.beginPath(); c.arc(6, y, 8 + Math.sin(y)*2, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(W-6, y, 8 + Math.cos(y)*2, 0, Math.PI*2); c.fill();
+  }
+  
+  // Road
+  c.strokeStyle='#d97706'; c.lineWidth=26; c.lineCap='round'; c.lineJoin='round'; c.beginPath(); c.moveTo(path[0].x,path[0].y); for(let i=1;i<path.length;i++)c.lineTo(path[i].x,path[i].y); c.stroke();
+  c.strokeStyle='#f59e0b'; c.lineWidth=18; c.beginPath(); c.moveTo(path[0].x,path[0].y); for(let i=1;i<path.length;i++)c.lineTo(path[i].x,path[i].y); c.stroke();
   
   const end=path[path.length-1];
   c.fillStyle='#ef4444';
-  c.fillRect(end.x-10,end.y-12,20,24);
+  c.fillRect(end.x-24,end.y-12,24,24);
   c.fillStyle='#7f1d1d';
-  c.fillRect(end.x-10,end.y-12,4,6);
-  c.fillRect(end.x-2,end.y-12,4,6);
-  c.fillRect(end.x+6,end.y-12,4,6);
+  c.fillRect(end.x-24,end.y-12,4,6);
+  c.fillRect(end.x-14,end.y-12,4,6);
+  c.fillRect(end.x-4,end.y-12,4,6);
   
   for(const tw of s.towers){
-    c.beginPath();c.arc(tw.x,tw.y,tw.range,0,Math.PI*2);c.strokeStyle='rgba(99,102,241,.15)';c.lineWidth=1;c.stroke();
-    c.fillStyle='#6366f1';c.beginPath();c.arc(tw.x,tw.y,8,0,Math.PI*2);c.fill();
-    c.strokeStyle='#4f46e5';c.lineWidth=2;c.stroke();
+    c.beginPath();c.arc(tw.x,tw.y,tw.range,0,Math.PI*2);c.strokeStyle='rgba(99,102,241,.12)';c.lineWidth=1;c.stroke();
+    if(tw.type === 'dragon') drawHeroDragon(c, tw.x, tw.y);
+    else if(tw.type === 'cat') drawMagicCat(c, tw.x, tw.y);
+    else drawDartBird(c, tw.x, tw.y);
   }
+  
   for(const e of s.enemies){
-    c.fillStyle='#e63946';
-    c.beginPath();
-    c.moveTo(e.x,e.y-7);
-    c.lineTo(e.x+7,e.y);
-    c.lineTo(e.x,e.y+7);
-    c.lineTo(e.x-7,e.y);
-    c.closePath();
-    c.fill();
-    
-    c.fillStyle='rgba(0,0,0,.5)';c.fillRect(e.x-9,e.y-12,18,3);c.fillStyle='#4ade80';c.fillRect(e.x-9,e.y-12,18*(e.hp/e.mhp),3);
+    drawBalloon(c, e.x, e.y, e.size, e.color);
   }
-  c.fillStyle='#fbbf24'; for(const p of s.projs){c.beginPath();c.arc(p.x,p.y,3,0,Math.PI*2);c.fill();}
-  if(s.spawned>=s.maxEnemies&&!s.enemies.length&&s.running){
-    c.fillStyle='rgba(0,0,0,.85)';c.fillRect(0,H/2-28,W,56);
-    c.fillStyle='#4ade80';c.font='bold 14px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('WAVE COMPLETED',W/2,H/2);
-    s.running=false; localStorage.setItem('lz_td_round',tdRound+1); mgScore+=200; document.getElementById('mg-score-disp').textContent=mgScore; return;
+  
+  // Custom projectile animations
+  for(const p of s.projs){
+    if (p.type === 'dragon') {
+      c.strokeStyle = '#ef4444'; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.tx, p.ty); c.stroke();
+    } else if (p.type === 'cat') {
+      c.fillStyle = '#c084fc';
+      c.beginPath(); c.arc(p.x, p.y, 5, 0, Math.PI*2); c.fill();
+    } else {
+      c.fillStyle = '#e2e8f0';
+      c.beginPath(); c.arc(p.x, p.y, 2, 0, Math.PI*2); c.fill();
+    }
+  }
+  
+  if(s.spawned>=s.maxEnemies && !s.enemies.length && s.running && s.waveRunning){
+    c.fillStyle='rgba(0,0,0,.8)'; c.fillRect(0,H/2-28,W,56);
+    c.fillStyle='#4ade80'; c.font='bold 14px system-ui,sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText('WAVE CLEAR',W/2,H/2);
+    s.running=false; s.waveRunning=false;
+    localStorage.setItem('lz_td_round',tdRound+1); mgScore+=200;
+    document.getElementById('mg-score-disp').textContent=mgScore;
+    return;
   }
   tdAnimFrame=requestAnimationFrame(tdLoop);
 }
@@ -1845,8 +2129,8 @@ function endStudy(){
       currentUser={username,uid,role};
       ['nav-uname','sets-nav-uname'].forEach(id=>document.getElementById(id).textContent=username);
       document.getElementById('student-nav-uname').textContent=username;
-      document.getElementById('dash-greeting').textContent= `Hey, ${username} 👋`;
-      document.getElementById('student-greeting').textContent=`Hey, ${username} 🎮`;
+      document.getElementById('dash-greeting').textContent=`Hey, ${username}`;
+      document.getElementById('student-greeting').textContent=`Hey, ${username}`;
       const chip=document.getElementById('nav-role-pill');
       chip.textContent=role==='teacher'?'Teacher':'Student';
       chip.className='nav-pill '+(role==='teacher'?'teacher':'student');
