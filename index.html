@@ -1,10 +1,35 @@
+An updated version of the application code is provided below, with the requested
+features integrated.
+
+Key Modifications:
+
+1.  Dynamic Question Types (Quiz vs. True/False):
+      - Added a minimalist Type Dropdown Selector inside each question card in
+        the Set Builder.
+      - It defaults to Multiple Choice (Quiz).
+      - Switching to True / False dynamically limits the answer options to just
+        two fields ("True" and "False") which are pre-filled and read-only.
+      - Live gameplay (game-page and study-page) automatically adapts to the
+        saved layout, rendering either a 4-tile grid (Multiple Choice) or a
+        balanced 2-tile row (True/False).
+2.  Duplication Support for Type: The duplicateQuestion() helper extracts and
+    copies the active question type and selected answer option to the new inline
+    copy card correctly.
+3.  Bulletproof Checkbox Sizing & Centering: Preserved the circle styling with
+    explicit horizontal limits (aspect-ratio: 1/1; max-width: 22px;
+    max-height: 22px) to prevent stretching, keeping the checkmark centered.
+4.  Persistent TD State & Minimalist Map: Kept the clean vector-grid styled
+    pathing map and maintained cross-session metadata persistence (carrying
+    towers, gold, lives, and wave indexes across subsequent bonus rounds of the
+    active quiz).
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Learn Zone</title>
-<!-- Custom embedded SVG Favicon matching the uploaded image -->
+<!-- Custom embedded SVG Favicon matching the graduation cap logo -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236366f1'/%3E%3Cpath d='M16 9l9 4.5-9 4.5-9-4.5z' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 16v3c0 1.5 1.5 2.5 6 2.5s6-1 6-2.5v-3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 14v4.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -157,6 +182,46 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .ans-dot.a{background:#e63946;} .ans-dot.b{background:#457b9d;} .ans-dot.c{background:#e9a020;} .ans-dot.d{background:#2a9d8f;}
 .ans-row input{flex:1;border:none;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);outline:none;}
 .ans-row input::placeholder{color:var(--text3);}
+.ans-row input[readonly] {
+  cursor: default;
+  opacity: 0.85;
+  user-select: none;
+}
+
+/* Minimalist Builder dropdown type selector layout */
+.q-type-selector {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+.q-type-selector label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.q-type-selector select {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+.q-type-selector select:focus {
+  border-color: var(--accent);
+}
 
 /* Constrained Circle Radio Checkbox (Guaranteed Circle, centered Checkmark) */
 .ans-check {
@@ -311,7 +376,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
 .q-bubble{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 36px;width:100%;max-width:760px;text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center;}
 .q-text{font-size:22px;font-weight:700;color:var(--text);line-height:1.35;}
 
-/* Answer tiles */
+/* Answer tiles (Adapts dynamically to 2 or 4 grid options) */
 .ans-tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:760px;}
 .tile-btn{border:1px solid var(--border);border-radius:var(--radius);padding:0 22px;height:82px;color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:16px;text-align:left;transition:all .15s;}
 .tile-btn:hover:not(:disabled){transform:none;opacity:0.9;}
@@ -1287,15 +1352,51 @@ window.addQuestion = () => {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
     <div class="q-num">Question</div>
+    
+    <div class="q-type-selector">
+      <label>Type:</label>
+      <select name="type-${uniqueId}" onchange="changeQuestionType(${uniqueId}, this.value)">
+        <option value="quiz" selected>Multiple Choice</option>
+        <option value="tf">True / False</option>
+      </select>
+    </div>
+
     <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
-    <div class="ans-grid">${LABELS.map((l,i)=>`
+    <div class="ans-grid" id="ans-grid-${uniqueId}"></div>`;
+  document.getElementById('q-list').appendChild(div);
+  
+  // Default answer choice container setup (Multiple Choice)
+  changeQuestionType(uniqueId, 'quiz');
+  reindexQuestions();
+};
+
+window.changeQuestionType = (uniqueId, type) => {
+  const grid = document.getElementById(`ans-grid-${uniqueId}`);
+  if (!grid) return;
+  
+  if (type === 'tf') {
+    // Render only two pre-filled options: True and False
+    grid.innerHTML = `
+      <div class="ans-row" id="arow-${uniqueId}-0" style="grid-column: span 2;">
+        <div class="ans-dot a">A</div>
+        <input type="text" name="a-${uniqueId}-0" value="True" readonly>
+        <input type="radio" name="cor-${uniqueId}" value="0" class="ans-check" onchange="markRow(${uniqueId})">
+      </div>
+      <div class="ans-row" id="arow-${uniqueId}-1" style="grid-column: span 2;">
+        <div class="ans-dot b">B</div>
+        <input type="text" name="a-${uniqueId}-1" value="False" readonly>
+        <input type="radio" name="cor-${uniqueId}" value="1" class="ans-check" onchange="markRow(${uniqueId})">
+      </div>
+    `;
+  } else {
+    // Render default 4 choice layout
+    grid.innerHTML = LABELS.map((l,i)=>`
       <div class="ans-row" id="arow-${uniqueId}-${i}">
         <div class="ans-dot ${DOTS[i]}">${l}</div>
         <input type="text" name="a-${uniqueId}-${i}" placeholder="Answer ${l}…">
         <input type="radio" name="cor-${uniqueId}" value="${i}" class="ans-check" onchange="markRow(${uniqueId})">
-      </div>`).join('')}</div>`;
-  document.getElementById('q-list').appendChild(div);
-  reindexQuestions();
+      </div>`).join('');
+  }
 };
 
 window.duplicateQuestion = (btn) => {
@@ -1305,7 +1406,16 @@ window.duplicateQuestion = (btn) => {
   
   // Extract values from source card
   const qText = card.querySelector(`[name="q-${qid}"]`).value;
-  const answers = [0,1,2,3].map(i => card.querySelector(`[name="a-${qid}-${i}"]`).value);
+  const typeSelect = card.querySelector(`select[name="type-${qid}"]`);
+  const qType = typeSelect ? typeSelect.value : 'quiz';
+  
+  let answers = [];
+  if (qType === 'quiz') {
+    answers = [0,1,2,3].map(i => card.querySelector(`[name="a-${qid}-${i}"]`).value);
+  } else {
+    answers = ["True", "False"];
+  }
+  
   const correctChoice = card.querySelector(`[name="cor-${qid}"]:checked`);
   const correctIdx = correctChoice ? correctChoice.value : null;
   
@@ -1319,23 +1429,33 @@ window.duplicateQuestion = (btn) => {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     </button>
     <div class="q-num">Question</div>
+    
+    <div class="q-type-selector">
+      <label>Type:</label>
+      <select name="type-${uniqueId}" onchange="changeQuestionType(${uniqueId}, this.value)">
+        <option value="quiz" ${qType === 'quiz' ? 'selected' : ''}>Multiple Choice</option>
+        <option value="tf" ${qType === 'tf' ? 'selected' : ''}>True / False</option>
+      </select>
+    </div>
+
     <input class="q-input" name="q-${uniqueId}" placeholder="Type your question…">
-    <div class="ans-grid">${LABELS.map((l,i)=>`
-      <div class="ans-row" id="arow-${uniqueId}-${i}">
-        <div class="ans-dot ${DOTS[i]}">${l}</div>
-        <input type="text" name="a-${uniqueId}-${i}" placeholder="Answer ${l}…">
-        <input type="radio" name="cor-${uniqueId}" value="${i}" class="ans-check" onchange="markRow(${uniqueId})">
-      </div>`).join('')}</div>`;
+    <div class="ans-grid" id="ans-grid-${uniqueId}"></div>`;
   
   // Insert duplicated card inline right after the source card
   card.parentNode.insertBefore(div, card.nextSibling);
   
-  // Seed copy values
+  // Apply answer options structural template
+  changeQuestionType(uniqueId, qType);
+  
   const copyCard = div;
   copyCard.querySelector(`[name="q-${uniqueId}"]`).value = qText;
-  [0,1,2,3].forEach(i => {
-    copyCard.querySelector(`[name="a-${uniqueId}-${i}"]`).value = answers[i];
-  });
+  
+  if (qType === 'quiz') {
+    [0,1,2,3].forEach(i => {
+      copyCard.querySelector(`[name="a-${uniqueId}-${i}"]`).value = answers[i];
+    });
+  }
+  
   if(correctIdx !== null) {
     const radio = copyCard.querySelector(`[name="cor-${uniqueId}"][value="${correctIdx}"]`);
     if(radio) {
@@ -1366,7 +1486,12 @@ function reindexQuestions() {
 }
 
 window.markRow = id => {
-  for(let i=0;i<4;i++){const row=document.getElementById(`arow-${id}-${i}`);row.classList.toggle('is-correct',row.querySelector(`input[value="${i}"]`)?.checked);}
+  for(let i=0;i<4;i++){
+    const row=document.getElementById(`arow-${id}-${i}`);
+    if (row) {
+      row.classList.toggle('is-correct',row.querySelector(`input[value="${i}"]`)?.checked);
+    }
+  }
 };
 
 window.saveSet = async () => {
@@ -1379,11 +1504,25 @@ window.saveSet = async () => {
   const questions=[]; let valid=true;
   cards.forEach(c=>{
     const qid=c.dataset.qid;
+    const qTypeSelect = c.querySelector(`select[name="type-${qid}"]`);
+    const qtype = qTypeSelect ? qTypeSelect.value : 'quiz';
     const qt=c.querySelector(`[name="q-${qid}"]`).value.trim();
-    const ans=[0,1,2,3].map(i=>c.querySelector(`[name="a-${qid}-${i}"]`).value.trim());
+    
+    let ans;
+    if (qtype === 'tf') {
+      ans = ["True", "False"];
+    } else {
+      ans = [0,1,2,3].map(i=>c.querySelector(`[name="a-${qid}-${i}"]`).value.trim());
+    }
+    
     const cor=c.querySelector(`[name="cor-${qid}"]:checked`);
-    if(!qt||ans.some(a=>!a)||!cor){valid=false;return;}
-    questions.push({question:qt,answers:ans,correct:+cor.value});
+    if(!qt || (qtype === 'quiz' && ans.some(a=>!a)) || !cor){valid=false;return;}
+    questions.push({
+      question:qt,
+      answers:ans,
+      correct:+cor.value,
+      type: qtype
+    });
   });
   if(!valid){showToast('Fill all fields and mark correct answers.');return;}
   try {
@@ -1569,6 +1708,8 @@ function renderQ() {
   document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
   document.getElementById('streak-count').textContent=streak;
   const cont=document.getElementById('ans-tiles'); cont.innerHTML='';
+  
+  // Render buttons dynamically depending on available answer list size (e.g. 2 for True/False, 4 for Quiz)
   q.answers.forEach((ans,i)=>{
     const b=document.createElement('button'); b.className='tile-btn'; b.dataset.i=i;
     b.innerHTML=`<span class="tile-shape ${SHAPES[i]}"></span>${esc(ans)}`;
@@ -1860,7 +2001,7 @@ window.startTdWave = () => {
 function drawMinimalistBalloon(ctx, x, y, size, color) {
   ctx.fillStyle = color;
   ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; stroke();
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
 }
 
 function drawMinimalistBird(ctx, x, y) {
@@ -2060,6 +2201,7 @@ function renderStudy(){
   studyQTime=0; clearInterval(studyQTimer);
   studyQTimer=setInterval(()=>{studyQTime+=.1;const el=document.getElementById('study-timer');el.textContent=studyQTime.toFixed(1)+'s';el.classList.toggle('warn',studyQTime>15);},100);
   const cont=document.getElementById('study-tiles'); cont.innerHTML='';
+  
   q.answers.forEach((ans,i)=>{
     const b=document.createElement('button'); b.className='study-tile'; b.dataset.i=i;
     b.innerHTML=`<span class="ts"><span class="tile-shape ${SHAPES[i]}"></span></span>${esc(ans)}`;
