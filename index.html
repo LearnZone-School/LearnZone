@@ -769,6 +769,36 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
         <div class="mode-choice" id="hm-study" onclick="selectHostMode('study')"><h4>Study Mode</h4><p>Self-paced progress with time-weighted scoring</p></div>
       </div>
     </div>
+
+    <!-- NEW SETUP SECTIONS (Order & End Condition) -->
+    <div class="host-section">
+      <div class="host-section-title">Question Order</div>
+      <div class="mode-choice-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="mode-choice sel" id="order-standard" onclick="selectOrder('standard')">
+          <h4>Linear</h4>
+          <p>Questions appear sequentially</p>
+        </div>
+        <div class="mode-choice" id="order-random" onclick="selectOrder('random')">
+          <h4>Randomized</h4>
+          <p>Questions shuffled dynamically</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="host-section">
+      <div class="host-section-title">Session End Condition</div>
+      <div class="mode-choice-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="mode-choice sel" id="end-complete" onclick="selectEndCondition('complete')">
+          <h4>Set Completion</h4>
+          <p>Ends when all questions are answered</p>
+        </div>
+        <div class="mode-choice" id="end-time" onclick="selectEndCondition('time')">
+          <h4>Time Limit</h4>
+          <p>Loop set until 2 minutes runs out</p>
+        </div>
+      </div>
+    </div>
+
     <div class="host-section" id="game-type-section">
       <div class="host-section-title">Bonus Mini-Game</div>
       <div class="game-choice-row">
@@ -858,6 +888,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
   <div class="game-top">
     <span class="game-title-text" id="game-title">Quiz</span>
     <div class="gpills">
+      <span class="gpill" id="game-session-timer-pill" style="display:none; border-color:#f87171; color:#f87171;">Time: 2:00</span>
       <span class="gpill" id="game-score-pill">0 pts</span>
       <span class="gpill" id="game-streak-pill">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
@@ -898,6 +929,7 @@ body{background:var(--bg);color:var(--text);font-family:system-ui, -apple-system
   <div class="study-top">
     <span class="study-title-text" id="study-title">Study</span>
     <div class="study-pills">
+      <span class="study-pill" id="study-session-timer-pill" style="display:none; border-color:#f87171; color:#f87171;">Time: 2:00</span>
       <span class="study-pill" id="study-q-pill">Q 1</span>
       <span class="study-pill" id="study-pts-pill">0 pts</span>
       <button style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 14px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;color:var(--text);" onclick="goHome()">✕ Quit</button>
@@ -1013,6 +1045,13 @@ let allBrowseSets = [];
 let tdRound = 1, tdCanvas, tdCtx, tdAnimFrame, tdState = {};
 let mgTimer = null, mgScore = 0;
 const mgDuration = 10000;
+
+// Dynamic Session Configurations
+let playOrder = 'standard'; // 'standard' or 'random'
+let playEndCondition = 'complete'; // 'complete' or 'time'
+let sessionQuestions = [];
+let sessionEndTimer = null;
+let sessionTimeLeft = 120; // 2 minutes (120s)
 
 // Persistent Tower Defense Meta State (across quiz sessions)
 let globalTdState = null;
@@ -1136,6 +1175,7 @@ function setLoggedIn(username, uid, role) {
 }
 
 window.logout = () => {
+  stopGlobalSessionTimer();
   [lobbyUnsub, studentLobbyUnsub].forEach(u=>{if(u)u();});
   lobbyUnsub=studentLobbyUnsub=null; currentUser=null;
   localStorage.removeItem('lz_session');
@@ -1517,6 +1557,12 @@ window.openHostSetup = (sj, target) => {
   document.getElementById('hm-game').classList.add('sel'); document.getElementById('hm-study').classList.remove('sel');
   document.getElementById('game-type-section').style.display='block';
   
+  // Setup options defaults
+  playOrder = 'standard';
+  playEndCondition = 'complete';
+  selectOrder('standard');
+  selectEndCondition('complete');
+  
   ['math','tower','scramble'].forEach(t=>document.getElementById('gc-'+t).classList.toggle('sel',t==='math'));
   hostMode='game'; hostGameType='math';
   
@@ -1545,6 +1591,18 @@ window.selectGameType = t => {
   ['math','tower','scramble'].forEach(g=>document.getElementById('gc-'+g).classList.toggle('sel',g===t));
 };
 
+window.selectOrder = (ord) => {
+  playOrder = ord;
+  document.getElementById('order-standard').classList.toggle('sel', ord === 'standard');
+  document.getElementById('order-random').classList.toggle('sel', ord === 'random');
+};
+
+window.selectEndCondition = (cond) => {
+  playEndCondition = cond;
+  document.getElementById('end-complete').classList.toggle('sel', cond === 'complete');
+  document.getElementById('end-time').classList.toggle('sel', cond === 'time');
+};
+
 window.handleSetupStart = () => {
   if (setupTarget === 'host') {
     createLobby();
@@ -1566,6 +1624,7 @@ window.createLobby = async () => {
     const ref=await addDoc(collection(db,'lobbies'),{
       code, hostUid:currentUser.uid, hostUsername:currentUser.username,
       setData:hostingSet, mode:hostMode, gameType:hostGameType,
+      playOrder, playEndCondition,
       status:'waiting', students:[], createdAt:serverTimestamp()
     });
     currentLobbyId=ref.id;
@@ -1650,7 +1709,10 @@ function renderStudentLobby(lobbyId, data, nick) {
     const d=snap.data(); if(!d) return;
     if(d.status==='started'){
       studentLobbyUnsub(); studentLobbyUnsub=null;
-      // Reset persistent TD meta state for multiplayer student session
+      // Sync host configurations to multiplayer student session
+      playOrder = d.playOrder || 'standard';
+      playEndCondition = d.playEndCondition || 'complete';
+      // Reset persistent TD meta state for student session
       globalTdState = null;
       if(d.mode==='game') startGame(JSON.stringify(d.setData), d.gameType);
       else startStudy(JSON.stringify(d.setData));
@@ -1669,16 +1731,38 @@ window.startGame = (sj, gameType) => {
   if(!currentSet.questions?.length){showToast('No questions.');return;}
   chosenMiniGame=gameType||hostGameType||'math';
   lastSetJson=sj; qIdx=score=streak=correct=wrong=consecutiveCorrect=0; answered=false;
+  
+  // Question Order Setup
+  sessionQuestions = [...currentSet.questions];
+  if (playOrder === 'random') {
+    sessionQuestions = shuffle(sessionQuestions);
+  }
+  
   document.getElementById('game-title').textContent=currentSet.title;
-  showPage('game-page'); renderQ();
+  showPage('game-page');
+  
+  // Start Session Countdown Timer
+  startGlobalSessionTimer(false);
+  renderQ();
 };
 
 function renderQ() {
-  const qs=currentSet.questions;
-  if(qIdx>=qs.length){endGame();return;}
-  const q=qs[qIdx]; answered=false;
+  const qs=sessionQuestions;
+  if(qIdx>=qs.length){
+    if (playEndCondition === 'time') {
+      qIdx=0;
+      // Re-shuffle if randomized order is chosen
+      if (playOrder === 'random') {
+        sessionQuestions = shuffle([...currentSet.questions]);
+      }
+    } else {
+      endGame();
+      return;
+    }
+  }
+  const q=sessionQuestions[qIdx]; answered=false;
   document.getElementById('q-text').textContent=q.question;
-  document.getElementById('game-prog').style.width=`${qIdx/qs.length*100}%`;
+  document.getElementById('game-prog').style.width=`${qIdx/sessionQuestions.length*100}%`;
   document.getElementById('game-fb').style.display='none';
   document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
   document.getElementById('streak-count').textContent=streak;
@@ -1722,7 +1806,7 @@ function pick(idx,cor) {
     fb.className='fb-strip bad'; 
     fb.innerHTML=`
       <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#e63946;color:#fff;margin-right:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-      <span>Incorrect. Correct answer: ${esc(currentSet.questions[qIdx].answers[cor])}</span>`;
+      <span>Incorrect. Correct answer: ${esc(sessionQuestions[qIdx].answers[cor])}</span>`;
   }
   document.getElementById('game-score-pill').textContent=`${score.toLocaleString()} pts`;
   document.getElementById('streak-count').textContent=streak;
@@ -1731,7 +1815,7 @@ function pick(idx,cor) {
 
 function timeUp() {
   answered=true; sfxBad();
-  const q=currentSet.questions[qIdx];
+  const q=sessionQuestions[qIdx];
   document.querySelectorAll('.tile-btn').forEach((b,i)=>{b.disabled=true;b.classList.add(i===q.correct?'correct':'dim');});
   streak=0; wrong++; consecutiveCorrect=0;
   const fb=document.getElementById('game-fb'); fb.style.display='flex';
@@ -1744,6 +1828,7 @@ function timeUp() {
 
 function endGame() {
   clearInterval(gameTimer);
+  stopGlobalSessionTimer();
   const total=correct+wrong, pct=total?Math.round(correct/total*100):0;
   
   const svgTrophy = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent)"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/></svg>`;
@@ -1752,16 +1837,59 @@ function endGame() {
 
   document.getElementById('r-icon').innerHTML=pct>=80?svgTrophy:pct>=50?svgStar:svgBook;
   document.getElementById('r-title').textContent=pct>=80?'Excellent Session':'Study Complete';
-  document.getElementById('r-score').textContent=studyScore.toLocaleString();
-  document.getElementById('r-cor').textContent=studyCorrect;
-  document.getElementById('r-wrn').textContent=studyWrong;
+  document.getElementById('r-score').textContent=score.toLocaleString();
+  document.getElementById('r-cor').textContent=correct;
+  document.getElementById('r-wrn').textContent=wrong;
   document.getElementById('r-pct').textContent=pct+'%';
   showPage('results-page');
 }
 
 window.playAgain = () => { if(lastSetJson) startGame(lastSetJson, chosenMiniGame); };
-window.quitGame = () => { clearInterval(gameTimer); goHome(); };
-window.goHome = () => showPage(currentUser?.role==='student'?'student-page':'dashboard-page');
+window.quitGame = () => { clearInterval(gameTimer); stopGlobalSessionTimer(); goHome(); };
+window.goHome = () => { stopGlobalSessionTimer(); showPage(currentUser?.role==='student'?'student-page':'dashboard-page'); };
+
+// ── Session Countdown Manager ──
+function startGlobalSessionTimer(isStudy) {
+  if (sessionEndTimer) clearInterval(sessionEndTimer);
+  const pill = document.getElementById(isStudy ? 'study-session-timer-pill' : 'game-session-timer-pill');
+  
+  if (playEndCondition !== 'time') {
+    if (pill) pill.style.display = 'none';
+    return;
+  }
+  
+  sessionTimeLeft = 120; // 2 Minutes
+  if (pill) {
+    pill.style.display = 'inline-flex';
+    updateSessionTimerDisplay(pill);
+  }
+  
+  sessionEndTimer = setInterval(() => {
+    sessionTimeLeft--;
+    if (pill) updateSessionTimerDisplay(pill);
+    if (sessionTimeLeft <= 0) {
+      clearInterval(sessionEndTimer);
+      if (isStudy) {
+        endStudy();
+      } else {
+        endGame();
+      }
+    }
+  }, 1000);
+}
+
+function stopGlobalSessionTimer() {
+  if (sessionEndTimer) {
+    clearInterval(sessionEndTimer);
+    sessionEndTimer = null;
+  }
+}
+
+function updateSessionTimerDisplay(element) {
+  const min = Math.floor(sessionTimeLeft / 60);
+  const sec = sessionTimeLeft % 60;
+  element.textContent = `Time: ${min}:${sec.toString().padStart(2, '0')}`;
+}
 
 // ── Mini-Games ──
 function launchMiniGame() {
@@ -2158,15 +2286,35 @@ function tdLoop(){
 window.startStudy = sj => {
   currentSet=JSON.parse(sj);
   if(!currentSet.questions?.length){showToast('No questions.');return;}
-  studyPool=shuffle([...currentSet.questions]);
+  
+  // Question Order setup
+  studyPool = [...currentSet.questions];
+  if (playOrder === 'random') {
+    studyPool = shuffle(studyPool);
+  }
+  
   studyIdx=studyScore=studyCorrect=studyWrong=studyQTime=0;
   document.getElementById('study-title').textContent=currentSet.title;
   document.getElementById('study-pts-pill').textContent='0 pts';
-  showPage('study-page'); renderStudy();
+  showPage('study-page');
+  
+  // Start Session Countdown Timer
+  startGlobalSessionTimer(true);
+  renderStudy();
 };
 
 function renderStudy(){
-  if(studyIdx>=studyPool.length){endStudy();return;}
+  if(studyIdx>=studyPool.length){
+    if (playEndCondition === 'time') {
+      studyIdx = 0;
+      if (playOrder === 'random') {
+        studyPool = shuffle([...currentSet.questions]);
+      }
+    } else {
+      endStudy();
+      return;
+    }
+  }
   const q=studyPool[studyIdx];
   document.getElementById('study-q-lbl').textContent= `Question ${studyIdx+1} of ${studyPool.length}`;
   document.getElementById('study-q-text').textContent=q.question;
