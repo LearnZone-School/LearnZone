@@ -1,28 +1,3 @@
-An updated version of the application code is provided below, with the requested
-features integrated.
-
-Key Modifications:
-
-1.  Dynamic Question Types (Quiz vs. True/False):
-      - Added a minimalist Type Dropdown Selector inside each question card in
-        the Set Builder.
-      - It defaults to Multiple Choice (Quiz).
-      - Switching to True / False dynamically limits the answer options to just
-        two fields ("True" and "False") which are pre-filled and read-only.
-      - Live gameplay (game-page and study-page) automatically adapts to the
-        saved layout, rendering either a 4-tile grid (Multiple Choice) or a
-        balanced 2-tile row (True/False).
-2.  Duplication Support for Type: The duplicateQuestion() helper extracts and
-    copies the active question type and selected answer option to the new inline
-    copy card correctly.
-3.  Bulletproof Checkbox Sizing & Centering: Preserved the circle styling with
-    explicit horizontal limits (aspect-ratio: 1/1; max-width: 22px;
-    max-height: 22px) to prevent stretching, keeping the checkmark centered.
-4.  Persistent TD State & Minimalist Map: Kept the clean vector-grid styled
-    pathing map and maintained cross-session metadata persistence (carrying
-    towers, gold, lives, and wave indexes across subsequent bonus rounds of the
-    active quiz).
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
